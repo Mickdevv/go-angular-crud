@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type item struct {
@@ -23,6 +26,7 @@ var items = []item{
     {Task: "Task 3", Done: false},
 }
 
+var secretKey = []byte("secret-key")
 
 func main() {
 	items = append(items, item{Task: "Task 4", Done: true})
@@ -43,6 +47,20 @@ func getAllItems(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
 		return
 	}
+}
+
+func createToken(username string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+		"username": username,
+		"exp": time.Now().Add(time.Hour*24).Unix(),
+	})
+
+	tokenString, err := token.SignedString(secretKey)
+
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
 }
 
 
