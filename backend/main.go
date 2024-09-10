@@ -50,7 +50,7 @@ func getAllItems(w http.ResponseWriter, r *http.Request) {
 }
 
 func createToken(username string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims {
 		"username": username,
 		"exp": time.Now().Add(time.Hour*24).Unix(),
 	})
@@ -63,6 +63,20 @@ func createToken(username string) (string, error) {
 	return tokenString, nil
 }
 
+func verifyToken(tokenString string) error {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return secretKey, nil
+	})
+	if err != nil {
+		return err
+	 }
+	
+	 if !token.Valid {
+		return fmt.Errorf("invalid token")
+	 }
+	
+	 return nil
+}
 
 // CORS middleware to handle cross-origin requests
 func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
