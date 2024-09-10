@@ -1,82 +1,26 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"go-angular/auth"
+	"go-angular/items"
+	"go-angular/models"
 	"net/http"
-	"time"
-
-	"github.com/golang-jwt/jwt/v5"
 )
 
-type item struct {
-	Task string `json:"task"`
-	Done bool `json:"done"`
-}
 
-type user struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Items []item `json:"items"`
-}
-
-var items = []item{
-    {Task: "Task 1", Done: false},
-    {Task: "Task 2", Done: true},
-    {Task: "Task 3", Done: false},
-}
-
-var secretKey = []byte("secret-key")
 
 func main() {
-	items = append(items, item{Task: "Task 4", Done: true})
-	items = append(items, item{Task: "Task 5", Done: false})
+	items.Items = append(items.Items, models.Item{Task: "Task 4", Done: true})
+	items.Items = append(items.Items, models.Item{Task: "Task 5", Done: false})
 
-	http.HandleFunc("GET /api/items", corsMiddleware(getAllItems))
+	http.HandleFunc("GET /api/items", corsMiddleware(items.GetAllItems))
+	http.HandleFunc("POST /api/login", corsMiddleware(auth.LoginHandler))
 
 	fmt.Println("Server started at :3000")
     http.ListenAndServe(":3000", nil)
 }
 
-func getAllItems(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(items)
-	w.Header().Set("Content-Type", "application/json")
-
-	err := json.NewEncoder(w).Encode(items)
-	if err != nil {
-		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
-		return
-	}
-}
-
-func createToken(username string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims {
-		"username": username,
-		"exp": time.Now().Add(time.Hour*24).Unix(),
-	})
-
-	tokenString, err := token.SignedString(secretKey)
-
-	if err != nil {
-		return "", err
-	}
-	return tokenString, nil
-}
-
-func verifyToken(tokenString string) error {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return secretKey, nil
-	})
-	if err != nil {
-		return err
-	 }
-	
-	 if !token.Valid {
-		return fmt.Errorf("invalid token")
-	 }
-	
-	 return nil
-}
 
 // CORS middleware to handle cross-origin requests
 func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
