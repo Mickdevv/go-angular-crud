@@ -1,0 +1,11 @@
+.card-container {
+    display: inline-flex;
+    max-width: 400px; /* Adjust this value as needed */
+    margin: 1rem;   /* Center the card horizontally */
+  }
+  
+/* If you want to set a fixed width instead of a max-width */
+.fixed-width-card {
+width: 300px; /* Adjust this value as needed */
+margin: 0 auto; /* Center the card horizontally */
+}
