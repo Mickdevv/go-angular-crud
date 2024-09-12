@@ -14,7 +14,9 @@ var secretKey = []byte("secret-key")
 
 
 func CreateToken(username string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims {
+	
+	fmt.Println("Creating token")
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims {
 		"username": username,
 		"exp": time.Now().Add(time.Hour*24).Unix(),
 	})
@@ -22,6 +24,7 @@ func CreateToken(username string) (string, error) {
 	tokenString, err := token.SignedString(secretKey)
 
 	if err != nil {
+		fmt.Printf("Error creating token : %v", err)
 		return "", err
 	}
 	return tokenString, nil
@@ -47,20 +50,23 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var u models.User
 	json.NewDecoder(r.Body).Decode(&u)
-	fmt.Printf("The user request value %v", u)
+	fmt.Printf("\nThe user request value %v", u)
 
 	if u.Username == "Chek" && u.Password == "123456" {
 		tokenString, err := CreateToken(u.Username)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Errorf("No username found")
+			fmt.Errorf("\nNo username found")
+			return  
 		}
+		fmt.Printf("\nToken : %v", tokenString)
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, tokenString)
 		return
-		
+
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprint(w, "Invalid credentials")
+		return 
 	}
 }
