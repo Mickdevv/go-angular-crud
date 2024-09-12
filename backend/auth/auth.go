@@ -49,4 +49,18 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&u)
 	fmt.Printf("The user request value %v", u)
 
+	if u.Username == "Chek" && u.Password == "123456" {
+		tokenString, err := CreateToken(u.Username)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Errorf("No username found")
+		}
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprint(w, tokenString)
+		return
+		
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprint(w, "Invalid credentials")
+	}
 }

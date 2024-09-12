@@ -8,5 +8,9 @@ type Item struct {
 type User struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type ItemList struct {
+	Owner User `json:"user"`
 	Items []Item `json:"items"`
 }
