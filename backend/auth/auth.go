@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go-angular/models"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -69,4 +70,62 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Invalid credentials")
 		return 
 	}
+}
+
+func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	tokenString := r.Header.Get("Authorization")
+
+	if tokenString == "" {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprint(w, "Missing authorization header")
+		return
+	}
+
+	tokenString = tokenString[len("Bearer "):]
+
+	err := VerifyToken(tokenString)
+
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprint(w, "Invalid token")
+		return 
+	}
+
+	fmt.Fprint(w, "Welcome to the protected route")
+}
+
+// ProtectRoute is the middleware that validates the token.
+func ProtectRoute(next http.HandlerFunc) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "application/json")
+        tokenString := r.Header.Get("Authorization")
+
+        // Check if the Authorization header is present
+        if tokenString == "" {
+            w.WriteHeader(http.StatusUnauthorized)
+            fmt.Fprint(w, `{"error": "Missing authorization header"}`)
+            return
+        }
+
+        // Extract token from "Bearer <token>"
+        if strings.HasPrefix(tokenString, "Bearer ") {
+            tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+        } else {
+            w.WriteHeader(http.StatusUnauthorized)
+            fmt.Fprint(w, `{"error": "Invalid authorization header"}`)
+            return
+        }
+
+        // Verify the token
+        err := VerifyToken(tokenString)
+        if err != nil {
+            w.WriteHeader(http.StatusUnauthorized)
+            fmt.Fprintf(w, `{"error": "Invalid token: %v"}`, err)
+            return
+        }
+
+        // If the token is valid, proceed to the next handler
+        next(w, r)
+    }
 }
