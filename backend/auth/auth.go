@@ -3,6 +3,7 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
+	"go-angular/db"
 	"go-angular/models"
 	"net/http"
 	"strings"
@@ -30,6 +31,8 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "Passwords do not match")
 		return 
 	}
+
+	db.GetUserByUsername(username)
 
 	fmt.Fprintf(w, "Received POST request. Username: %s, Password1: %s, Password2: %s", username, password1, password2)
 }
