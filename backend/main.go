@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go-angular/auth"
+	"go-angular/db"
 	"go-angular/items"
 	"go-angular/models"
 	"net/http"
@@ -13,9 +14,11 @@ func main() {
 	items.Items = append(items.Items, models.Item{Task: "Task 4", Done: true})
 	items.Items = append(items.Items, models.Item{Task: "Task 5", Done: false})
 
-	// db.InitDb()
+	database := db.InitDb()
 
-	http.HandleFunc("GET /api/items", corsMiddleware(auth.ProtectRoute(items.GetAllItems)))
+	http.HandleFunc("GET /api/items", corsMiddleware(auth.ProtectRoute(items.GetAllItems)) {
+		// TODO : add explicit database reference to be used in handler functions
+	})
 
 	http.HandleFunc("POST /api/login", corsMiddleware(auth.LoginHandler))
 	http.HandleFunc("POST /api/sign-up", corsMiddleware(auth.SignUp))

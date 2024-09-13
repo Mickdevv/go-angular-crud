@@ -8,21 +8,19 @@ import (
 	_ "github.com/mattn/go-sqlite3" // SQLite driver
 )
 
-var db *sql.DB
 
 func InitDb() {
-    var err error
-    db, err = sql.Open("sqlite3", "./todo.db")
+    db, err := sql.Open("sqlite3", "./todo.db")
     if err != nil {
         log.Fatal(err)
     }
-    // defer DB.Close()
+    defer db.Close()
 
     // Create the necessary tables if they don't exist
-    createTables()
+    createTables(db)
 }
 
-func createTables() {
+func createTables(db *sql.DB) {
     createUserTable := `
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,7 +47,7 @@ func createTables() {
 }
 
 // Create User
-func CreateUser(user models.User) (int64, error) {
+func CreateUser(db *sql.DB, user models.User) (int64, error) {
     query := `INSERT INTO users (username, password) VALUES (?, ?)`
     result, err := db.Exec(query, user.Username, user.Password)
     if err != nil {
@@ -58,10 +56,10 @@ func CreateUser(user models.User) (int64, error) {
     return result.LastInsertId()
 }
 
-func GetUserById() {
+func GetUserById(db *sql.DB) {
     // TODO: Implement this function later
 }
 
-func GetUserByUsername(username string) {
+func GetUserByUsername(db *sql.DB, username string) {
     // TODO: Implement this function later
 }
