@@ -9,8 +9,6 @@ import (
 	// SQLite driver
 )
 
-
-
 func main() {
 	items.Items = append(items.Items, models.Item{Task: "Task 4", Done: true})
 	items.Items = append(items.Items, models.Item{Task: "Task 5", Done: false})

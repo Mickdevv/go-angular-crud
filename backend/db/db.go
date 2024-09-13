@@ -2,23 +2,27 @@ package db
 
 import (
 	"database/sql"
+	"go-angular/models"
 	"log"
 
 	_ "github.com/mattn/go-sqlite3" // SQLite driver
 )
 
+var db *sql.DB
+
 func InitDb() {
-    db, err := sql.Open("sqlite3", "./todo.db")
+    var err error
+    db, err = sql.Open("sqlite3", "./todo.db")
     if err != nil {
         log.Fatal(err)
     }
-    defer db.Close()
+    // defer DB.Close()
 
     // Create the necessary tables if they don't exist
-    createTables(db)
+    createTables()
 }
 
-func createTables(db *sql.DB) {
+func createTables() {
     createUserTable := `
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,17 +49,19 @@ func createTables(db *sql.DB) {
 }
 
 // Create User
-func CreateUser(db *sql.DB, username, password string) (int64, error) {
-    query := `INSERT INTO users (username, password) VALUES (?, ?, ?)`
-    result, err := db.Exec(query, username, password)
+func CreateUser(user models.User) (int64, error) {
+    query := `INSERT INTO users (username, password) VALUES (?, ?)`
+    result, err := db.Exec(query, user.Username, user.Password)
     if err != nil {
         return 0, err
     }
     return result.LastInsertId()
 }
 
-func GetUserById()
+func GetUserById() {
+    // TODO: Implement this function later
+}
 
 func GetUserByUsername(username string) {
-
+    // TODO: Implement this function later
 }

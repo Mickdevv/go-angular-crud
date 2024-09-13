@@ -9,10 +9,30 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 
 var secretKey = []byte("secret-key")
+
+func HashPassword(password string) (string, error) {
+    // Generate a salted hash for the password
+    hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+        return "", err
+    }
+
+    // Return the hashed password as a string
+    return string(hash), nil
+}
+
+// ComparePasswords compares a plain password with a hashed password.
+func ComparePasswords(hashedPassword, password string) bool {
+    // Compare the hashed password with the plain password
+    err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+    return err == nil
+}
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Sign-up")
@@ -30,10 +50,21 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	if password1 != password2 {
 		fmt.Fprint(w, "Passwords do not match")
 		return 
+	} else if len(password1) < 5 {
+		fmt.Fprint(w, "Password must be longer than 5 characters")
+		return 
 	}
 
-	db.GetUserByUsername(username)
+	hash, err := HashPassword(r.FormValue("password"))
 
+	// db.GetUserByUsername(username)
+
+	user := models.User{
+		Username: r.FormValue("username"),  // Get the "username" form field
+		Password: hash,  // Get the "password" form field
+	}
+
+	db.CreateUser(user)
 	fmt.Fprintf(w, "Received POST request. Username: %s, Password1: %s, Password2: %s", username, password1, password2)
 }
 
