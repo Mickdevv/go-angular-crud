@@ -25,3 +25,25 @@ func GetAllItems(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func GetUserItems(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(Items)
+	w.Header().Set("Content-Type", "application/json")
+
+	err := json.NewEncoder(w).Encode(Items)
+	if err != nil {
+		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+		return
+	}
+}
+
+func GetUserItem(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(Items)
+	w.Header().Set("Content-Type", "application/json")
+
+	err := json.NewEncoder(w).Encode(Items)
+	if err != nil {
+		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+		return
+	}
+}

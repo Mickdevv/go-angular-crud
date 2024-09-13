@@ -13,6 +13,26 @@ import (
 
 var secretKey = []byte("secret-key")
 
+func SignUp(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Sign-up")
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		return
+	}
+
+	// Access form data
+	username := r.FormValue("username")
+	password1 := r.FormValue("password1")
+	password2 := r.FormValue("password2")
+
+	if password1 != password2 {
+		fmt.Fprint(w, "Passwords do not match")
+		return 
+	}
+
+	fmt.Fprintf(w, "Received POST request. Username: %s, Password1: %s, Password2: %s", username, password1, password2)
+}
 
 func CreateToken(username string) (string, error) {
 	
@@ -21,6 +41,7 @@ func CreateToken(username string) (string, error) {
 		"username": username,
 		"exp": time.Now().Add(time.Hour*24).Unix(),
 	})
+	
 
 	tokenString, err := token.SignedString(secretKey)
 
@@ -31,19 +52,24 @@ func CreateToken(username string) (string, error) {
 	return tokenString, nil
 }
 
-func VerifyToken(tokenString string) error {
+func VerifyToken(tokenString string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return secretKey, nil
 	})
 	if err != nil {
-		return err
+		return nil, err
 	 }
 	
 	 if !token.Valid {
-		return fmt.Errorf("invalid token")
+		return nil, fmt.Errorf("invalid token")
 	 }
+
+	 // Extract claims (payload) from the token
+	 if claims, ok := token.Claims.(jwt.MapClaims); ok {
+        return claims, nil
+    }
 	
-	 return nil
+	return nil, fmt.Errorf("could not extract claims")
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +110,9 @@ func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
 
 	tokenString = tokenString[len("Bearer "):]
 
-	err := VerifyToken(tokenString)
+	claims, err := VerifyToken(tokenString)
+
+	fmt.Println(claims)
 
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -118,12 +146,14 @@ func ProtectRoute(next http.HandlerFunc) http.HandlerFunc {
         }
 
         // Verify the token
-        err := VerifyToken(tokenString)
+        claims, err := VerifyToken(tokenString)
         if err != nil {
             w.WriteHeader(http.StatusUnauthorized)
             fmt.Fprintf(w, `{"error": "Invalid token: %v"}`, err)
             return
         }
+
+		fmt.Println(claims["username"])
 
         // If the token is valid, proceed to the next handler
         next(w, r)

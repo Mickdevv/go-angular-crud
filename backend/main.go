@@ -6,6 +6,7 @@ import (
 	"go-angular/items"
 	"go-angular/models"
 	"net/http"
+	// SQLite driver
 )
 
 
@@ -14,9 +15,12 @@ func main() {
 	items.Items = append(items.Items, models.Item{Task: "Task 4", Done: true})
 	items.Items = append(items.Items, models.Item{Task: "Task 5", Done: false})
 
+	// db.InitDb()
+
 	http.HandleFunc("GET /api/items", corsMiddleware(auth.ProtectRoute(items.GetAllItems)))
-	http.HandleFunc("GET /api/protected", corsMiddleware(auth.ProtectedHandler))
+
 	http.HandleFunc("POST /api/login", corsMiddleware(auth.LoginHandler))
+	http.HandleFunc("POST /api/sign-up", corsMiddleware(auth.SignUp))
 
 	fmt.Println("Server started at :3000")
     http.ListenAndServe(":3000", nil)
