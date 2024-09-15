@@ -53,7 +53,6 @@ func createTables(database *sql.DB) {
 func CreateUser(database *sql.DB, user models.User) (int64, error) {
     query := `INSERT INTO users (username, password) VALUES (?, ?)`
     fmt.Println(user)
-    fmt.Println(database)
     result, err := database.Exec(query, user.Username, user.Password)
     if err != nil {
         fmt.Println(err)

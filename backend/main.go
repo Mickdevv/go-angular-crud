@@ -29,6 +29,13 @@ func main() {
 	http.HandleFunc("POST /api/sign-up", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		auth.SignUp(database, w, r)
 	}))
+	http.HandleFunc("POST /api/users", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		auth.SignUp(database, w, r)
+	}))
+	http.HandleFunc("POST /api/users/{id}", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+
+		auth.GetUserHandler(database, w, r)
+	}))
 
 	fmt.Println("Server started at http://localhost:3000")
     http.ListenAndServe(":3000", nil)

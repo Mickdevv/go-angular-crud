@@ -8,6 +8,7 @@ import (
 	"go-angular/models"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -41,6 +42,35 @@ func ComparePasswords(hashedPassword, password string) bool {
     // Compare the hashed password with the plain password
     err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
     return err == nil
+}
+
+func GetUsersHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
+
+}
+
+func GetUserHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) (error) {
+	id := r.PathValue("id")
+	
+	var user models.User
+
+	// Convert string to int64
+	userID, err := strconv.ParseInt(id, 10, 64)  // Base 10, 64-bit size
+	if err != nil {
+		fmt.Println("Error converting string to int64:", err)
+		return err
+	}
+
+	user, err = db.GetUserById(database, userID)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(user)
+
+	err = json.NewEncoder(w).Encode(user)
+
+	return nil
 }
 
 func SignUp(database *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -84,7 +114,7 @@ func SignUp(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	userID, err := db.CreateUser(database, user)
 
 	if err != nil {
-		http.Error(w, "Failed to create user", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
