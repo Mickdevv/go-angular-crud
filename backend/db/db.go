@@ -83,6 +83,24 @@ func GetUserById(database *sql.DB, id int64) (models.User, error) {
     return user, nil
 }
 
-func GetUserByUsername(database *sql.DB, username string) {
-    // TODO: Implement this function later
+func GetUserByUsername(database *sql.DB, username string) (models.User, error) {
+    var user models.User
+
+    user.Password = ""
+
+    query := `SELECT id, username, password FROM users WHERE username = ?`
+
+    err := database.QueryRow(query, username).Scan(&user.ID, &user.Username, &user.Password)
+    
+    if err != nil {
+        if err == sql.ErrNoRows {
+            // Handle the case where no user is found
+            return user, fmt.Errorf("no user found with username %v", username)
+        }
+        // Handle any other error that occurred during the query
+        return user, err
+    }
+    fmt.Println(user)
+
+    return user, nil
 }

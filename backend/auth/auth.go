@@ -109,8 +109,6 @@ func SignUp(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 		Password: hash,
 	}
 
-	fmt.Println(user)
-
 	userID, err := db.CreateUser(database, user)
 
 	if err != nil {
@@ -126,7 +124,6 @@ func SignUp(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println("New user : ", newUser.ID, newUser.Username)
-
 	fmt.Fprintf(w, "Received POST request. Username: %s, Password1: %s, Password2: %s, Hash: %s. User Id in the database : %v", req.Username, req.Password1, req.Password2, hash, userID)
 }
 
@@ -171,12 +168,25 @@ func VerifyToken(tokenString string) (jwt.MapClaims, error) {
 func LoginHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var u models.User
-	json.NewDecoder(r.Body).Decode(&u)
-	fmt.Printf("\nThe user request value %v", u)
+	var requestUser models.User
+	json.NewDecoder(r.Body).Decode(&requestUser)
+	fmt.Printf("\nThe user request value %v\n", requestUser)
 
-	if u.Username == "Chek" && u.Password == "123456" {
-		tokenString, err := CreateToken(u.Username)
+	databaseUser, err := db.GetUserByUsername(database, requestUser.Username)
+	if err != nil {
+		fmt.Fprint(w, "No user found with that username")
+		return
+	}
+
+	hashedPassword, err := HashPassword(requestUser.Password)
+
+	if err != nil {
+		fmt.Fprint(w, "Password error")
+		return
+	}
+
+	if hashedPassword == databaseUser.Password {
+		tokenString, err := CreateToken(requestUser.Username)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Errorf("\nNo username found")
