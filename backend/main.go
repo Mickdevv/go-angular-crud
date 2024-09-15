@@ -16,14 +16,21 @@ func main() {
 
 	database := db.InitDb()
 
-	http.HandleFunc("GET /api/items", corsMiddleware(auth.ProtectRoute(items.GetAllItems)) {
-		// TODO : add explicit database reference to be used in handler functions
-	})
+	http.HandleFunc("/api/items", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+        items.GetAllItems(database, w, r) 
+    }))
+	http.HandleFunc("/api/items/{id}", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
+        items.GetUserItem(database, w, r)
+    })))
 
-	http.HandleFunc("POST /api/login", corsMiddleware(auth.LoginHandler))
-	http.HandleFunc("POST /api/sign-up", corsMiddleware(auth.SignUp))
+	http.HandleFunc("POST /api/login", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		auth.LoginHandler(database, w, r)
+	}))
+	http.HandleFunc("POST /api/sign-up", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		auth.SignUp(database, w, r)
+	}))
 
-	fmt.Println("Server started at :3000")
+	fmt.Println("Server started at http://localhost:3000")
     http.ListenAndServe(":3000", nil)
 }
 

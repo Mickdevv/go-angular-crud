@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"go-angular/models"
 	"log"
 
@@ -9,18 +10,20 @@ import (
 )
 
 
-func InitDb() {
-    db, err := sql.Open("sqlite3", "./todo.db")
+func InitDb() *sql.DB {
+    database, err := sql.Open("sqlite3", "./todo.db")
     if err != nil {
         log.Fatal(err)
     }
-    defer db.Close()
+
 
     // Create the necessary tables if they don't exist
-    createTables(db)
+    createTables(database)
+
+    return database
 }
 
-func createTables(db *sql.DB) {
+func createTables(database *sql.DB) {
     createUserTable := `
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,29 +40,50 @@ func createTables(db *sql.DB) {
         FOREIGN KEY (user_id) REFERENCES users(id)
     );`
 
-    if _, err := db.Exec(createUserTable); err != nil {
+    if _, err := database.Exec(createUserTable); err != nil {
         log.Fatal(err)
     }
 
-    if _, err := db.Exec(createTodoTable); err != nil {
+    if _, err := database.Exec(createTodoTable); err != nil {
         log.Fatal(err)
     }
 }
 
 // Create User
-func CreateUser(db *sql.DB, user models.User) (int64, error) {
+func CreateUser(database *sql.DB, user models.User) (int64, error) {
     query := `INSERT INTO users (username, password) VALUES (?, ?)`
-    result, err := db.Exec(query, user.Username, user.Password)
+    fmt.Println(user)
+    fmt.Println(database)
+    result, err := database.Exec(query, user.Username, user.Password)
     if err != nil {
+        fmt.Println(err)
         return 0, err
     }
+
     return result.LastInsertId()
 }
 
-func GetUserById(db *sql.DB) {
-    // TODO: Implement this function later
+func GetUserById(database *sql.DB, id int64) (models.User, error) {
+    var user models.User
+
+    user.Password = ""
+
+    query := `SELECT id, username FROM users WHERE id = ?`
+
+    err := database.QueryRow(query, id).Scan(&user.ID, &user.Username)
+    
+    if err != nil {
+        if err == sql.ErrNoRows {
+            // Handle the case where no user is found
+            return user, fmt.Errorf("no user found with id %d", id)
+        }
+        // Handle any other error that occurred during the query
+        return user, err
+    }
+
+    return user, nil
 }
 
-func GetUserByUsername(db *sql.DB, username string) {
+func GetUserByUsername(database *sql.DB, username string) {
     // TODO: Implement this function later
 }

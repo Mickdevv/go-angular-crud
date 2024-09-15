@@ -1,10 +1,12 @@
 package auth
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"go-angular/db"
 	"go-angular/models"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -15,6 +17,13 @@ import (
 )
 
 var secretKey = []byte("secret-key")
+
+// Define the struct that mirrors the expected JSON structure
+type SignUpRequest struct {
+    Username  string `json:"username"`
+    Password1 string `json:"password1"`
+    Password2 string `json:"password2"`
+}
 
 func HashPassword(password string) (string, error) {
     // Generate a salted hash for the password
@@ -34,38 +43,61 @@ func ComparePasswords(hashedPassword, password string) bool {
     return err == nil
 }
 
-func SignUp(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Sign-up")
-	err := r.ParseForm()
+func SignUp(database *sql.DB, w http.ResponseWriter, r *http.Request) {
+
+	var req SignUpRequest
+
+	// Parse the JSON body into the SignUpRequest struct
+	fmt.Println(r.Body)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		if err == io.EOF {
+			http.Error(w, "Request body is empty", http.StatusBadRequest)
+		} else {
+			http.Error(w, "Failed to decode JSON", http.StatusBadRequest)
+		}
 		return
 	}
 
-	// Access form data
-	username := r.FormValue("username")
-	password1 := r.FormValue("password1")
-	password2 := r.FormValue("password2")
+	// Close the request body when done (best practice)
+	defer r.Body.Close()
+	
+	fmt.Println("Sign-up")
 
-	if password1 != password2 {
+	if req.Password1 != req.Password2 {
 		fmt.Fprint(w, "Passwords do not match")
 		return 
-	} else if len(password1) < 5 {
+	} else if len(req.Password1) < 5 {
 		fmt.Fprint(w, "Password must be longer than 5 characters")
 		return 
 	}
 
-	hash, err := HashPassword(r.FormValue("password"))
-
-	// db.GetUserByUsername(username)
+	hash, err := HashPassword(req.Password1)
 
 	user := models.User{
-		Username: r.FormValue("username"),  // Get the "username" form field
-		Password: hash,  // Get the "password" form field
+		Username: req.Username,
+		Password: hash,
 	}
 
-	db.CreateUser(user)
-	fmt.Fprintf(w, "Received POST request. Username: %s, Password1: %s, Password2: %s", username, password1, password2)
+	fmt.Println(user)
+
+	userID, err := db.CreateUser(database, user)
+
+	if err != nil {
+		http.Error(w, "Failed to create user", http.StatusInternalServerError)
+		return
+	}
+
+	newUser, err := db.GetUserById(database, userID)
+
+	if err != nil {
+		http.Error(w, "Failed to get user", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Println("New user : ", newUser.ID, newUser.Username)
+
+	fmt.Fprintf(w, "Received POST request. Username: %s, Password1: %s, Password2: %s, Hash: %s. User Id in the database : %v", req.Username, req.Password1, req.Password2, hash, userID)
 }
 
 func CreateToken(username string) (string, error) {
@@ -106,7 +138,7 @@ func VerifyToken(tokenString string) (jwt.MapClaims, error) {
 	return nil, fmt.Errorf("could not extract claims")
 }
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
+func LoginHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var u models.User
