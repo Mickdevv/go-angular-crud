@@ -133,12 +133,14 @@ func SignUp(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Received POST request. Username: %s, Password1: %s, Password2: %s, Hash: %s. User Id in the database : %v", req.Username, req.Password1, req.Password2, hash, userID)
 }
 
-func CreateToken(username string) (string, error) {
+func CreateToken(username string) (string, time.Time, error) {
+
+	expirationTime := time.Now().Add(time.Hour*24)
 	
 	fmt.Println("Creating token")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims {
 		"username": username,
-		"exp": time.Now().Add(time.Hour*24).Unix(),
+		"exp": expirationTime.Unix(),
 	})
 	
 
@@ -146,9 +148,9 @@ func CreateToken(username string) (string, error) {
 
 	if err != nil {
 		fmt.Printf("Error creating token : %v", err)
-		return "", err
+		return "", expirationTime, err
 	}
-	return tokenString, nil
+	return tokenString, expirationTime, nil
 }
 
 func VerifyToken(tokenString string) (jwt.MapClaims, error) {
@@ -193,16 +195,28 @@ func LoginHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if ComparePasswords(databaseUser.Password, requestUser.Password) {
-		tokenString, err := CreateToken(requestUser.Username)
+		tokenString, tokenExpiration, err := CreateToken(requestUser.Username)
+
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprint(w, "\nNo username found")
 			return
 		}
+
 		fmt.Printf("\nToken : %v\n", tokenString)
+		http.SetCookie(w, &http.Cookie{
+			Name:     "jwt_token",
+			Value:    tokenString,
+			Expires:  tokenExpiration,
+			HttpOnly: true,         // Ensures cookie is inaccessible to JavaScript
+			Secure:   true,         // Ensures cookie is sent over HTTPS
+			SameSite: http.SameSiteStrictMode, // Protects against CSRF
+			Path:     "/",
+		})
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, tokenString)
 		return
+		
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprint(w, "Invalid credentials")
