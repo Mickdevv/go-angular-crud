@@ -199,7 +199,7 @@ func LoginHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 			fmt.Errorf("\nNo username found")
 			return  
 		}
-		fmt.Printf("\nToken : %v", tokenString)
+		fmt.Printf("\nToken : %v\n", tokenString)
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, tokenString)
 		return
