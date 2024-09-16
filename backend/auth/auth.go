@@ -196,8 +196,8 @@ func LoginHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 		tokenString, err := CreateToken(requestUser.Username)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Errorf("\nNo username found")
-			return  
+			fmt.Fprint(w, "\nNo username found")
+			return
 		}
 		fmt.Printf("\nToken : %v\n", tokenString)
 		w.WriteHeader(http.StatusOK)
