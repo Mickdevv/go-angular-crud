@@ -31,6 +31,11 @@ type LoginRequest struct {
     Password string `json:"password"`
 }
 
+type LoginResponse struct {
+    Access  string `json:"access"`
+    Refresh string `json:"refresh"`
+}
+
 func HashPassword(password string) (string, error) {
     // Generate a salted hash for the password
     hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -177,6 +182,7 @@ func LoginHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var requestUser LoginRequest
+	var loginResponse LoginResponse
 	json.NewDecoder(r.Body).Decode(&requestUser)
 	fmt.Printf("\nThe user request value %v\n", requestUser)
 
@@ -213,8 +219,13 @@ func LoginHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 			SameSite: http.SameSiteStrictMode, // Protects against CSRF
 			Path:     "/",
 		})
+
+
+		loginResponse.Access = tokenString
+		loginResponse.Refresh = tokenString
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, tokenString)
+		json.NewEncoder(w).Encode(loginResponse)
+		// fmt.Fprint(w, tokenString)
 		return
 		
 	} else {

@@ -16,9 +16,9 @@ func main() {
 
 	database := db.InitDb()
 
-	http.HandleFunc("/api/items", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/items", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
         items.GetAllItems(database, w, r) 
-    }))
+    })))
 	http.HandleFunc("/api/items/{id}", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
         items.GetUserItem(database, w, r)
     })))
