@@ -16,11 +16,14 @@ func main() {
 
 	database := db.InitDb()
 
-	http.HandleFunc("/api/items", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("GET /api/items", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
         items.GetAllItems(database, w, r) 
     })))
-	http.HandleFunc("/api/items/{id}", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("GET /api/items/{id}", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
         items.GetUserItem(database, w, r)
+    })))
+	http.HandleFunc("POST /api/items/{id}", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
+        items.AddUserItem(database, w, r)
     })))
 
 	http.HandleFunc("POST /api/login", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +36,6 @@ func main() {
 		auth.SignUp(database, w, r)
 	}))
 	http.HandleFunc("POST /api/users/{id}", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
-
 		auth.GetUserHandler(database, w, r)
 	}))
 
