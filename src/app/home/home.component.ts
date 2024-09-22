@@ -1,6 +1,6 @@
 
 import { Component } from '@angular/core';
-import { ApiService } from '../api.service'
+import { ApiService } from '../services/api.service'
 import { CommonModule } from '@angular/common'
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
