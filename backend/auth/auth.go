@@ -26,6 +26,16 @@ type SignUpRequest struct {
     Password2 string `json:"password2"`
 }
 
+type LoginRequest struct {
+    Username  string `json:"username"`
+    Password string `json:"password"`
+}
+
+type LoginResponse struct {
+    Access  string `json:"access"`
+    Refresh string `json:"refresh"`
+}
+
 func HashPassword(password string) (string, error) {
     // Generate a salted hash for the password
     hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -103,6 +113,7 @@ func SignUp(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	hash, err := HashPassword(req.Password1)
+	fmt.Println(req.Password1, hash, "--")
 
 	user := models.User{
 		Username: req.Username,
@@ -127,12 +138,14 @@ func SignUp(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Received POST request. Username: %s, Password1: %s, Password2: %s, Hash: %s. User Id in the database : %v", req.Username, req.Password1, req.Password2, hash, userID)
 }
 
-func CreateToken(username string) (string, error) {
+func CreateToken(username string) (string, time.Time, error) {
+
+	expirationTime := time.Now().Add(time.Hour*24)
 	
 	fmt.Println("Creating token")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims {
 		"username": username,
-		"exp": time.Now().Add(time.Hour*24).Unix(),
+		"exp": expirationTime.Unix(),
 	})
 	
 
@@ -140,9 +153,9 @@ func CreateToken(username string) (string, error) {
 
 	if err != nil {
 		fmt.Printf("Error creating token : %v", err)
-		return "", err
+		return "", expirationTime, err
 	}
-	return tokenString, nil
+	return tokenString, expirationTime, nil
 }
 
 func VerifyToken(tokenString string) (jwt.MapClaims, error) {
@@ -168,7 +181,8 @@ func VerifyToken(tokenString string) (jwt.MapClaims, error) {
 func LoginHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var requestUser models.User
+	var requestUser LoginRequest
+	var loginResponse LoginResponse
 	json.NewDecoder(r.Body).Decode(&requestUser)
 	fmt.Printf("\nThe user request value %v\n", requestUser)
 
@@ -179,24 +193,41 @@ func LoginHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	hashedPassword, err := HashPassword(requestUser.Password)
+	fmt.Println(requestUser.Password, hashedPassword, "--")
 
 	if err != nil {
 		fmt.Fprint(w, "Password error")
 		return
 	}
 
-	if hashedPassword == databaseUser.Password {
-		tokenString, err := CreateToken(requestUser.Username)
+	if ComparePasswords(databaseUser.Password, requestUser.Password) {
+		tokenString, tokenExpiration, err := CreateToken(requestUser.Username)
+
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Errorf("\nNo username found")
-			return  
+			fmt.Fprint(w, "\nNo username found")
+			return
 		}
-		fmt.Printf("\nToken : %v", tokenString)
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprint(w, tokenString)
-		return
 
+		fmt.Printf("\nToken : %v\n", tokenString)
+		http.SetCookie(w, &http.Cookie{
+			Name:     "jwt_token",
+			Value:    tokenString,
+			Expires:  tokenExpiration,
+			HttpOnly: true,         // Ensures cookie is inaccessible to JavaScript
+			Secure:   true,         // Ensures cookie is sent over HTTPS
+			SameSite: http.SameSiteStrictMode, // Protects against CSRF
+			Path:     "/",
+		})
+
+
+		loginResponse.Access = tokenString
+		loginResponse.Refresh = tokenString
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(loginResponse)
+		// fmt.Fprint(w, tokenString)
+		return
+		
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprint(w, "Invalid credentials")

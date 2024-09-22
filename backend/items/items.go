@@ -17,7 +17,9 @@ var Items = []models.Item{
 }
 
 func GetAllItems(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	fmt.Println(db)
+	w.Header().Set("Content-Type", "application/json")
+
+	// fmt.Println(db)
 	w.Header().Set("Content-Type", "application/json")
 
 	err := json.NewEncoder(w).Encode(Items)
@@ -39,12 +41,11 @@ func GetUserItems(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUserItem(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	fmt.Println(Items)
 	w.Header().Set("Content-Type", "application/json")
+	return 
+}
 
-	err := json.NewEncoder(w).Encode(Items)
-	if err != nil {
-		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
-		return
-	}
+func AddUserItem(db *sql.DB, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	return 
 }
