@@ -1,13 +1,15 @@
 <p>login works!</p>
 
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <label for="username">username: </label>
+    <label for="username">Username: </label>
     <input id="username" type="text" formControlName="username">
     <br>
-    
-    <label for="password">password: </label>
+
+    <label for="password">Password: </label>
     <input id="password" type="password" formControlName="password">
     <br>
-    
+   
     <button type="submit" [disabled]="!loginForm.valid">Submit</button>
 </form>
+
+Don't have an account yet ? Sign up <a href="/register">here</a>

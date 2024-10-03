@@ -8,11 +8,15 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
 
-  base_url = "localhost:3000/api"
+  base_url = "http://localhost:3000/api"
 
   constructor(private http: HttpClient) {}
 
   login(user: User): Observable<any> {
-    return this.http.post<any>(`${this.base_url}/login`, user);
+    return this.http.post<any>(`${this.base_url}/login`, user, { withCredentials: true });
+  }
+
+  register(user: User): Observable<any> {
+    return this.http.post<any>(`${this.base_url}/register`, user, { withCredentials: true });
   }
 }

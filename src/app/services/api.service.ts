@@ -11,6 +11,6 @@ export class ApiService {
   constructor(private http: HttpClient) {}
 
   getData(): Observable<any> {
-    	return this.http.get<any>(this.api_URL)
+    	return this.http.get<any>(this.api_URL, { withCredentials: true })
   }
 }

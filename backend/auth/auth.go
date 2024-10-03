@@ -9,7 +9,6 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -20,7 +19,7 @@ import (
 var secretKey = []byte("secret-key")
 
 // Define the struct that mirrors the expected JSON structure
-type SignUpRequest struct {
+type RegisterRequest struct {
     Username  string `json:"username"`
     Password1 string `json:"password1"`
     Password2 string `json:"password2"`
@@ -83,9 +82,9 @@ func GetUserHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) (e
 	return nil
 }
 
-func SignUp(database *sql.DB, w http.ResponseWriter, r *http.Request) {
+func Register(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 
-	var req SignUpRequest
+	var req RegisterRequest
 
 	// Parse the JSON body into the SignUpRequest struct
 	fmt.Println(r.Body)
@@ -214,9 +213,8 @@ func LoginHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 			Name:     "jwt_token",
 			Value:    tokenString,
 			Expires:  tokenExpiration,
-			HttpOnly: true,         // Ensures cookie is inaccessible to JavaScript
-			Secure:   true,         // Ensures cookie is sent over HTTPS
-			SameSite: http.SameSiteStrictMode, // Protects against CSRF
+			HttpOnly: false,         // Ensures cookie is inaccessible to JavaScript
+			SameSite: http.SameSiteNoneMode, 
 			Path:     "/",
 		})
 
@@ -264,26 +262,36 @@ func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
 func ProtectRoute(next http.HandlerFunc) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
         w.Header().Set("Content-Type", "application/json")
-        tokenString := r.Header.Get("Authorization")
+        // tokenString := r.Header.Get("Authorization")
+
+		tokenCookie, err := r.Cookie("jwt_token")
+		if err != nil {
+			fmt.Println("Error occured while reading cookie")
+			w.WriteHeader(http.StatusUnauthorized)
+            fmt.Fprint(w, `{"error": "No valid token cookie found"}`)
+            return
+		}
+		fmt.Println("\nPrinting cookie with name as token")
+		fmt.Println(tokenCookie.Value)
 
         // Check if the Authorization header is present
-        if tokenString == "" {
-            w.WriteHeader(http.StatusUnauthorized)
-            fmt.Fprint(w, `{"error": "Missing authorization header"}`)
-            return
-        }
+        // if tokenString == "" {
+        //     w.WriteHeader(http.StatusUnauthorized)
+        //     fmt.Fprint(w, `{"error": "Missing authorization header"}`)
+        //     return
+        // }
 
         // Extract token from "Bearer <token>"
-        if strings.HasPrefix(tokenString, "Bearer ") {
-            tokenString = strings.TrimPrefix(tokenString, "Bearer ")
-        } else {
-            w.WriteHeader(http.StatusUnauthorized)
-            fmt.Fprint(w, `{"error": "Invalid authorization header"}`)
-            return
-        }
+        // if strings.HasPrefix(tokenString, "Bearer ") {
+        //     tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+        // } else {
+        //     w.WriteHeader(http.StatusUnauthorized)
+        //     fmt.Fprint(w, `{"error": "Invalid authorization header"}`)
+        //     return
+        // }
 
         // Verify the token
-        claims, err := VerifyToken(tokenString)
+        claims, err := VerifyToken(tokenCookie.Value)
         if err != nil {
             w.WriteHeader(http.StatusUnauthorized)
             fmt.Fprintf(w, `{"error": "Invalid token: %v"}`, err)
