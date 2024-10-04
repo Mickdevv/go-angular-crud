@@ -57,7 +57,7 @@ func main() {
 
 // CORS middleware to handle cross-origin requests
 func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
-	fmt.Println("CORS Middleware")
+	// fmt.Println("CORS Middleware")
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Set CORS headers to allow any origin (or restrict it to your frontend domain)
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
