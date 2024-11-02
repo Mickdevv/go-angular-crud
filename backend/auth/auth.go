@@ -112,7 +112,7 @@ func Register(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	hash, err := HashPassword(req.Password1)
-	fmt.Println(req.Password1, hash, "--")
+	// fmt.Println(req.Password1, hash, "--")
 
 	user := models.User{
 		Username: req.Username,

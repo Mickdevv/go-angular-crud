@@ -7,7 +7,6 @@ import (
 	"go-angular/items"
 	"go-angular/models"
 	"net/http"
-	// SQLite driver
 )
 
 func main() {
