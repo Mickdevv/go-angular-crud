@@ -18,7 +18,7 @@ func main() {
 	http.HandleFunc("/api/items/", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
-			items.GetAllItems(w, r) 
+			items.GetUserItems(w, r) 
 	   	default:
 			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	   }

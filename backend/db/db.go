@@ -122,3 +122,42 @@ func CreateItem(item models.Item) (int64, error) {
     return result.LastInsertId()
 }
 
+
+func GetUserItems(userId uint64) ([]models.Item, error) {
+    var items []models.Item
+    query := `SELECT id, task, done, user_id FROM items WHERE user_id = ?`
+    rows, err := Database.Query(query, userId)
+    if err != nil {
+        fmt.Println("Query error", err)
+        return nil, err
+    }
+    defer rows.Close() // Ensure rows are closed when the function finishes
+
+    for rows.Next() {
+        var item models.Item
+
+        err := rows.Scan(
+            &item.ID,
+            &item.Task,
+            &item.Done,
+            &item.OwnerId,
+        )
+
+        if err != nil {
+            fmt.Println("Row scan error", err)
+            return nil, err
+        }
+        items = append(items, item)
+    }
+
+    if rows.Err() != nil {
+        fmt.Println("Rows iteration error:", err)
+        return nil, err
+    }
+
+    for _, item := range items {
+        fmt.Println("Item:", item)
+    }
+
+    return items, nil
+}

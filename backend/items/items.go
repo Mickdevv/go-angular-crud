@@ -33,10 +33,17 @@ func GetAllItems(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetUserItems(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(Items)
 	w.Header().Set("Content-Type", "application/json")
 
-	err := json.NewEncoder(w).Encode(Items)
+	user, err := auth.CheckToken(r)
+	if err != nil {
+		fmt.Println("Token check failed", err)
+		return
+	}
+
+	items, err := db.GetUserItems(user.ID)
+
+	err = json.NewEncoder(w).Encode(items)
 	if err != nil {
 		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
 		return
@@ -51,35 +58,16 @@ func GetUserItem(w http.ResponseWriter, r *http.Request) {
 func AddItem(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	tokenCookie, err := r.Cookie("jwt_token")
+	user, err := auth.CheckToken(r)
 	if err != nil {
-		fmt.Println("Error occured while reading cookie")
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, `{"error": "No valid token cookie found"}`)
-		return
-	}
-	// Verify the token
-	claims, err := auth.VerifyToken(tokenCookie.Value)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintf(w, `{"error": "Invalid token: %v"}`, err)
+		fmt.Println("Token check failed", err)
 		return
 	}
 
 	var newItem AddItemRequest
 	json.NewDecoder(r.Body).Decode(&newItem)
 
-	var OwnerId uint64
-	if idFloat, ok := claims["id"].(float64); ok {
-		OwnerId = uint64(idFloat)
-	
-	// If claims["id"] is neither a string nor a float64, handle the error
-	} else {
-		fmt.Println("id is not in a recognized format (string or float64)")
-		return
-	}
-
-	newItemAdd := models.Item{Task: newItem.Task, Done: newItem.Done, OwnerId: OwnerId} 
+	newItemAdd := models.Item{Task: newItem.Task, Done: newItem.Done, OwnerId: user.ID} 
 
 	newItemId, err := db.CreateItem(newItemAdd)
 	if err != nil {

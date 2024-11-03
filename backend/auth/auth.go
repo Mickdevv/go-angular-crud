@@ -304,3 +304,32 @@ func ProtectRoute(next http.HandlerFunc) http.HandlerFunc {
         next(w, r)
     }
 }
+
+func CheckToken(r *http.Request) (models.User, error) {
+	var user models.User
+	tokenCookie, err := r.Cookie("jwt_token")
+	if err != nil {
+		return models.User{}, err
+	}
+	// Verify the token
+	claims, err := VerifyToken(tokenCookie.Value)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	if id, ok := claims["id"].(float64); ok {
+		user.ID = uint64(id)
+	} else {
+		fmt.Println("id is not in a recognized format (string or float64)")
+		return models.User{}, err
+	}
+
+	if username, ok := claims["username"].(string); ok {
+		user.Username = string(username)
+	} else {
+		fmt.Println("id is not in a recognized format (string or float64)")
+		return models.User{}, err
+	}
+
+	return user, nil
+}
