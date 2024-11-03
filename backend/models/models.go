@@ -3,11 +3,11 @@ package models
 type Item struct {
 	Task string `json:"task"`
 	Done bool `json:"done"`
-	OwnerId uint32 `json:"ownerId"`
+	OwnerId uint64 `json:"ownerId"`
 }
 
 type User struct {
-	ID uint32 `json:"id"`
+	ID uint64 `json:"id"`
 	Username string `json:"username"`
 	Password string `json:"-"`
 }

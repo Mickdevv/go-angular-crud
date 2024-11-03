@@ -7,47 +7,42 @@ import (
 	"go-angular/items"
 	"go-angular/models"
 	"net/http"
-	// SQLite driver
 )
 
 func main() {
-	items.Items = append(items.Items, models.Item{Task: "Task 4", Done: true})
+
+	db.InitDb()
+
 	items.Items = append(items.Items, models.Item{Task: "Task 5", Done: false})
 
-	database := db.InitDb()
-
-	http.HandleFunc("/api/items", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/items/", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
-			items.GetAllItems(database, w, r) 
+			items.GetAllItems(w, r) 
 	   	default:
 			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	   }
     })))
-	http.HandleFunc("GET /api/items/{id}", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
-        items.GetUserItem(database, w, r)
+	http.HandleFunc("GET /api/items/{id}/", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
+        items.GetUserItem(w, r)
     })))
-	http.HandleFunc("POST /api/items/{id}", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
-        items.AddUserItem(database, w, r)
+	http.HandleFunc("POST /api/items/", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
+        items.AddItem(w, r)
     })))
 
 	// Apply CORS middleware to /api/login
-	http.HandleFunc("/api/login", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/login/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		// Handle login requests
-		auth.LoginHandler(database, w, r)
+		auth.LoginHandler(w, r)
 	}))
-
-	// http.HandleFunc("POST /api/login", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
-	// 	auth.LoginHandler(database, w, r)
-	// }))
-	http.HandleFunc("POST /api/register", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
-		auth.Register(database, w, r)
+	http.HandleFunc("POST /api/register/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		auth.Register(w, r)
 	}))
-	http.HandleFunc("POST /api/users", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
-		auth.Register(database, w, r)
+	http.HandleFunc("POST /api/users/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		auth.Register(w, r)
 	}))
-	http.HandleFunc("POST /api/users/{id}", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
-		auth.GetUserHandler(database, w, r)
+	http.HandleFunc("POST /api/users/{id}/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		auth.GetUserHandler(w, r)
 	}))
 
 	fmt.Println("Server started at http://localhost:3000")

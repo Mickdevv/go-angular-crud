@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"go-angular/db"
@@ -53,11 +52,11 @@ func ComparePasswords(hashedPassword, password string) bool {
     return err == nil
 }
 
-func GetUsersHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
+func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func GetUserHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) (error) {
+func GetUserHandler(w http.ResponseWriter, r *http.Request) (error) {
 	id := r.PathValue("id")
 	
 	var user models.User
@@ -69,7 +68,7 @@ func GetUserHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) (e
 		return err
 	}
 
-	user, err = db.GetUserById(database, userID)
+	user, err = db.GetUserById(userID)
 
 	if err != nil {
 		return err
@@ -82,7 +81,7 @@ func GetUserHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) (e
 	return nil
 }
 
-func Register(database *sql.DB, w http.ResponseWriter, r *http.Request) {
+func Register(w http.ResponseWriter, r *http.Request) {
 
 	var req RegisterRequest
 
@@ -119,14 +118,14 @@ func Register(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 		Password: hash,
 	}
 
-	userID, err := db.CreateUser(database, user)
+	userID, err := db.CreateUser(user)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	newUser, err := db.GetUserById(database, userID)
+	newUser, err := db.GetUserById(userID)
 
 	if err != nil {
 		http.Error(w, "Failed to get user", http.StatusInternalServerError)
@@ -137,13 +136,14 @@ func Register(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Received POST request. Username: %s, Password1: %s, Password2: %s, Hash: %s. User Id in the database : %v", req.Username, req.Password1, req.Password2, hash, userID)
 }
 
-func CreateToken(username string) (string, time.Time, error) {
+func CreateToken(username string, id uint64) (string, time.Time, error) {
 
 	expirationTime := time.Now().Add(time.Hour*24)
 	
 	fmt.Println("Creating token")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims {
 		"username": username,
+		"id": id,
 		"exp": expirationTime.Unix(),
 	})
 	
@@ -177,15 +177,15 @@ func VerifyToken(tokenString string) (jwt.MapClaims, error) {
 	return nil, fmt.Errorf("could not extract claims")
 }
 
-func LoginHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var requestUser LoginRequest
 	var loginResponse LoginResponse
 	json.NewDecoder(r.Body).Decode(&requestUser)
-	fmt.Printf("\nThe user request value %v\n", requestUser)
+	fmt.Printf("\nThe user request value %v\n", requestUser.Username)
 
-	databaseUser, err := db.GetUserByUsername(database, requestUser.Username)
+	databaseUser, err := db.GetUserByUsername(requestUser.Username)
 	if err != nil {
 		fmt.Fprint(w, "No user found with that username")
 		return
@@ -200,7 +200,7 @@ func LoginHandler(database *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	if ComparePasswords(databaseUser.Password, requestUser.Password) {
-		tokenString, tokenExpiration, err := CreateToken(requestUser.Username)
+		tokenString, tokenExpiration, err := CreateToken(requestUser.Username, databaseUser.ID)
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -271,8 +271,8 @@ func ProtectRoute(next http.HandlerFunc) http.HandlerFunc {
             fmt.Fprint(w, `{"error": "No valid token cookie found"}`)
             return
 		}
-		fmt.Println("\nPrinting cookie with name as token")
-		fmt.Println(tokenCookie.Value)
+		// fmt.Println("\nPrinting cookie with name as token")
+		// fmt.Println(tokenCookie.Value)
 
         // Check if the Authorization header is present
         // if tokenString == "" {
