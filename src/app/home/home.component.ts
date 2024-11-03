@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common'
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
+import { fetchItems } from '../state/items/items.actions';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-home',
@@ -18,10 +20,11 @@ export class HomeComponent {
   data: any
   checked = false
 
-  constructor(private apiService: ApiService) {}
-  
+  constructor(private apiService: ApiService, private store: Store) { }
+
   ngOnInit(): void {
     this.fetchData()
+    this.store.dispatch(fetchItems.submit());
   }
 
   fetchData() {

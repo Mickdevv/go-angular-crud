@@ -1,5 +1,6 @@
 import { Type } from '@angular/core'
 import { Item } from '../../models/todo.model'
+import { ItemsEffects } from './items.effects'
 
 export interface ItemsState {
     items: Item[],
@@ -16,5 +17,5 @@ export const itemsInitialState: ItemsState = {
 }
 
 export const itemEffects: Type<unknown>[] = [
-
+    ItemsEffects
 ]
