@@ -122,6 +122,55 @@ func CreateItem(item models.Item) (int64, error) {
     return result.LastInsertId()
 }
 
+func RemoveItem(id int64) error {
+    query := "DELETE FROM items WHERE id = ?"
+
+    result, err := Database.Exec(query, id)
+    if err != nil {
+        fmt.Println("delete error", err)
+        return err
+    }
+
+    rowsAffected, err := result.RowsAffected()
+    if err != nil {
+        log.Printf("Error fetching rows affected for item ID %d: %v", id, err)
+        return fmt.Errorf("error fetching rows affected: %w", err)
+    }
+
+    if rowsAffected == 0 {
+        // No rows were deleted, meaning the item was not found
+        log.Printf("No item found with ID %d to delete", id)
+        return fmt.Errorf("no item found with ID %d", id)
+    }
+
+    log.Printf("Successfully deleted item with ID %d", id)
+    return nil
+}
+
+func UpdateItem(item models.Item) error {
+    query := "UPDATE items SET task = ?, done = ? WHERE id = ?"
+        
+    result, err := Database.Exec(query, item.Task, item.Done, item.ID)
+    if err != nil {
+        fmt.Println("delete error", err)
+        return err
+    }
+
+    rowsAffected, err := result.RowsAffected()
+    if err != nil {
+        log.Printf("Error fetching rows affected for item ID %d: %v", item.ID, err)
+        return fmt.Errorf("error fetching rows affected: %w", err)
+    }
+
+    if rowsAffected == 0 {
+        // No rows were deleted, meaning the item was not found
+        log.Printf("No item found with ID %d to delete", item.ID)
+        return fmt.Errorf("no item found with ID %d", item.ID)
+    }
+
+    log.Printf("Successfully deleted item with ID %d", item.ID)
+    return nil
+}
 
 func GetUserItems(userId uint64) ([]models.Item, error) {
     var items []models.Item
@@ -160,4 +209,40 @@ func GetUserItems(userId uint64) ([]models.Item, error) {
     }
 
     return items, nil
+}
+
+func GetUserItem(userId uint64, itemId uint64) (models.Item, error) {
+
+    query := `SELECT id, task, done, user_id FROM items WHERE user_id = ? AND id = ?`
+    rows, err := Database.Query(query, userId, itemId)
+    if err != nil {
+        fmt.Println("Query error", err)
+        return models.Item{}, err
+    }
+    defer rows.Close() // Ensure rows are closed when the function finishes
+
+    var item models.Item
+    for rows.Next() {
+
+        err := rows.Scan(
+            &item.ID,
+            &item.Task,
+            &item.Done,
+            &item.OwnerId,
+        )
+
+        if err != nil {
+            fmt.Println("Row scan error", err)
+            return models.Item{}, err
+        }
+    }
+
+    if rows.Err() != nil {
+        fmt.Println("Rows iteration error:", err)
+        return models.Item{}, err
+    }
+
+    fmt.Println("Item:", item)
+
+    return item, nil
 }

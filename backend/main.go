@@ -5,7 +5,6 @@ import (
 	"go-angular/auth"
 	"go-angular/db"
 	"go-angular/items"
-	"go-angular/models"
 	"net/http"
 )
 
@@ -13,22 +12,22 @@ func main() {
 
 	db.InitDb()
 
-	items.Items = append(items.Items, models.Item{Task: "Task 5", Done: false})
-
-	http.HandleFunc("/api/items/", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case "GET":
-			items.GetUserItems(w, r) 
-	   	default:
-			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-	   }
-    })))
-	http.HandleFunc("GET /api/items/{id}/", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
-        items.GetUserItem(w, r)
+	http.HandleFunc("GET /api/items/", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
+		items.GetUserItems(w, r) 
     })))
 	http.HandleFunc("POST /api/items/", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
-        items.AddItem(w, r)
+		items.AddItem(w, r)
     })))
+
+	http.HandleFunc("GET /api/items/{id}/", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
+		items.GetUserItem(w, r)
+	})))	
+	http.HandleFunc("PUT /api/items/{id}/", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
+		items.UpdateItem(w, r)
+	})))
+	http.HandleFunc("DELETE /api/items/{id}/", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
+		items.RemoveItem(w, r)
+	})))
 
 	// Apply CORS middleware to /api/login
 	http.HandleFunc("/api/login/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +44,7 @@ func main() {
 		auth.GetUserHandler(w, r)
 	}))
 
-	fmt.Println("Server started at http://localhost:3000")
+	fmt.Println("Server started at http://localhost:3000/")
     http.ListenAndServe(":3000", nil)
 }
 
