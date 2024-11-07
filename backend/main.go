@@ -57,7 +57,7 @@ func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		origin := r.Header.Get("Origin")
 
 		// Allow requests from specific origins (e.g., frontend at http://localhost:4200)
-		if origin == "http://localhost:4200" || origin == "http://localhost:3000" {
+		if origin == "http://localhost:4200" || origin == "http://localhost:3000" || origin == "http://127.0.0.1:3000" || origin == "http://127.0.0.1:4200" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 		}		
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")

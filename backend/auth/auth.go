@@ -183,7 +183,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var requestUser LoginRequest
 	var loginResponse LoginResponse
 	json.NewDecoder(r.Body).Decode(&requestUser)
-	fmt.Printf("\nThe user request value %v\n", requestUser.Username)
+	fmt.Printf("\nThe user request value %v\n", requestUser)
 
 	databaseUser, err := db.GetUserByUsername(requestUser.Username)
 	if err != nil {

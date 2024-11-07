@@ -3,7 +3,7 @@ import { itemsReducer } from "./items/items.reducers"
 import { ItemsState } from "./items/items.state"
 
 export interface AppState {
-    toDoList: ItemsState
+    items: ItemsState
 }
 
 export const effects = [

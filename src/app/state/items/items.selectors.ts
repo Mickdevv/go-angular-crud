@@ -1,9 +1,8 @@
 import { createSelector } from "@ngrx/store";
 import { AppState } from "../app.state";
-import { create } from "domain";
 
 export const selectItemsState = (state: AppState) =>
-    state.toDoList
+    state.items
 
 export const selectItems = createSelector(
     selectItemsState,
