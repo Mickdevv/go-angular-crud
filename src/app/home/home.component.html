@@ -2,9 +2,25 @@
 
 <div class="flex-container">
     <p-card *ngFor="let item of data; index as i" header="Simple Card" class="my-1 card-container">
-        <p class="m-0">
-            {{ i }}, {{ item.task }}
-        </p>
-        Done: <p-checkbox [(ngModel)]="item.done" [binary]="true" inputId="binary" />
+        <div class="my-5">
+            <p class="m-0">
+                {{ i }}, {{ item.task }}
+            </p>
+            Done: <p-checkbox [(ngModel)]="item.done" [binary]="true" inputId="binary" />
+        </div>
+        <div class="mt-5">
+            <button 
+                pButton 
+                pRipple 
+                label="Edit" 
+                class="p-button-success mr-2">
+            </button>
+            <button 
+                pButton 
+                pRipple 
+                label="Delete" 
+                class="p-button-danger">
+            </button>
+        </div>
     </p-card>
 </div>
