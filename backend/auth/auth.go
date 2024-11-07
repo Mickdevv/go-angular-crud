@@ -216,6 +216,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: false,         // Ensures cookie is inaccessible to JavaScript
 			SameSite: http.SameSiteNoneMode, 
 			Path:     "/",
+			Secure: true,
 		})
 
 

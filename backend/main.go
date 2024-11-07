@@ -54,7 +54,12 @@ func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	// fmt.Println("CORS Middleware")
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Set CORS headers to allow any origin (or restrict it to your frontend domain)
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:4200")
+		origin := r.Header.Get("Origin")
+
+		// Allow requests from specific origins (e.g., frontend at http://localhost:4200)
+		if origin == "http://localhost:4200" || origin == "http://localhost:3000" {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+		}		
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, Origin")
 		w.Header().Set("Access-Control-Allow-Credentials", "true") // Enable credentials (cookies, etc.)

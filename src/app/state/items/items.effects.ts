@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { ApiService } from "../../services/api.service";
 import { fetchItems } from "./items.actions";
@@ -7,16 +7,12 @@ import { Item } from "../../models/todo.model";
 
 @Injectable()
 export class ItemsEffects {
-    constructor(
-        private actions$: Actions,
-        private itemsService: ApiService // Service to handle HTTP requests
-    ) {
-        console.log("action", this.actions$)
-    }
+    private readonly actions = inject(Actions);
+    private readonly itemsService = inject(ApiService);
+
 
     getItems$ = createEffect(() =>
-
-        this.actions$.pipe(
+        this.actions.pipe(
             ofType(fetchItems.submit),
             mergeMap(() =>
                 this.itemsService.getData().pipe(

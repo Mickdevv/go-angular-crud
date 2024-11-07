@@ -10,13 +10,13 @@ export class AuthService {
 
   base_url = "http://localhost:3000/api"
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(user: User): Observable<any> {
-    return this.http.post<any>(`${this.base_url}/login`, user, { withCredentials: true });
+    return this.http.post<any>(`${this.base_url}/login/`, user, { withCredentials: true });
   }
 
   register(user: User): Observable<any> {
-    return this.http.post<any>(`${this.base_url}/register`, user, { withCredentials: true });
+    return this.http.post<any>(`${this.base_url}/register/`, user, { withCredentials: true });
   }
 }

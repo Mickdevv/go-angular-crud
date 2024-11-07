@@ -8,11 +8,14 @@ import { Item } from '../models/todo.model';
 })
 export class ApiService {
 
-  api_URL = "http://localhost:3000/api/items"
+  api_URL = "http://localhost:3000/api/items/"
 
   constructor(private http: HttpClient) { }
 
   getData(): Observable<any> {
     return this.http.get<Item>(this.api_URL, { withCredentials: true })
+  }
+  getDataById(id: string): Observable<any> {
+    return this.http.get<Item>(this.api_URL + id + "/", { withCredentials: true })
   }
 }
