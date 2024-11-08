@@ -4,15 +4,13 @@ import { ItemsEffects } from './items.effects'
 
 export interface ItemsState {
     items: Item[],
-    success: boolean,
     error: any,
     loading: boolean
 }
 
 export const itemsInitialState: ItemsState = {
     items: [],
-    success: false,
-    error: undefined,
+    error: {},
     loading: false
 }
 

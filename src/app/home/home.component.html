@@ -1,7 +1,7 @@
 <h2>Tasks : </h2>
 
 <div class="flex-container">
-    <div *ngIf="!itemsLoading()">
+    <div *ngIf="!itemsLoading() && items().length > 0">
         <p-card *ngFor="let item of items(); index as i" header="Simple Card" class="my-1 card-container">
             <div class="my-5">
                 <p class="m-0">
@@ -21,7 +21,10 @@
                     pButton 
                     pRipple 
                     label="Delete" 
-                    class="p-button-danger">
+                    class="p-button-danger"
+                    (click)="deleteItem(item.id)"
+                    >
+                    
                 </button>
             </div>
         </p-card>
@@ -29,4 +32,6 @@
     <div *ngIf="itemsLoading()">
         <p-progressSpinner ariaLabel="loading" />
     </div>
-</div>
+    <div *ngIf="items().length == 0">
+        <p>Loaded but empty</p>
+    </div>

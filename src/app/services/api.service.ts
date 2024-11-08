@@ -12,11 +12,15 @@ export class ApiService {
 
   constructor(private http: HttpClient) { }
 
-  getData(): Observable<any> {
+  getItems(): Observable<any> {
     return this.http.get<Item>(this.api_URL, { withCredentials: true })
   }
 
-  getDataById(id: string): Observable<any> {
+  getItemById(id: string): Observable<any> {
     return this.http.get<Item>(this.api_URL + id + "/", { withCredentials: true })
+  }
+
+  deleteItem(id: number): Observable<any> {
+    return this.http.delete<Number>(this.api_URL + id + "/", { withCredentials: true });
   }
 }

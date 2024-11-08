@@ -30,7 +30,7 @@ func main() {
 	})))
 
 	// Apply CORS middleware to /api/login
-	http.HandleFunc("/api/login/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("POST /api/login/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		// Handle login requests
 		auth.LoginHandler(w, r)
 	}))
@@ -59,10 +59,13 @@ func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		// Allow requests from specific origins (e.g., frontend at http://localhost:4200)
 		if origin == "http://localhost:4200" || origin == "http://localhost:3000" || origin == "http://127.0.0.1:3000" || origin == "http://127.0.0.1:4200" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
-		}		
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, Origin")
-		w.Header().Set("Access-Control-Allow-Credentials", "true") // Enable credentials (cookies, etc.)
+		}
+		
+		// w.Header().Set("Access-Control-Allow-Origin", "*")
+		// Allow methods and headers for cross-origin requests
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept, Origin, X-Csrf-Token")
+		w.Header().Set("Access-Control-Allow-Credentials", "true") // Allow credentials (cookies, etc.)
 
 		// Handle preflight OPTIONS request
 		if r.Method == http.MethodOptions {
@@ -74,3 +77,7 @@ func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		next.ServeHTTP(w, r)
 	}
 }
+
+func EnableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	}

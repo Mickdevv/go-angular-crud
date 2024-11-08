@@ -216,7 +216,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: false,         // Ensures cookie is inaccessible to JavaScript
 			SameSite: http.SameSiteNoneMode, 
 			Path:     "/",
-			Secure: true,
+			Secure: false,
 		})
 
 
@@ -272,24 +272,6 @@ func ProtectRoute(next http.HandlerFunc) http.HandlerFunc {
             fmt.Fprint(w, `{"error": "No valid token cookie found"}`)
             return
 		}
-		// fmt.Println("\nPrinting cookie with name as token")
-		// fmt.Println(tokenCookie.Value)
-
-        // Check if the Authorization header is present
-        // if tokenString == "" {
-        //     w.WriteHeader(http.StatusUnauthorized)
-        //     fmt.Fprint(w, `{"error": "Missing authorization header"}`)
-        //     return
-        // }
-
-        // Extract token from "Bearer <token>"
-        // if strings.HasPrefix(tokenString, "Bearer ") {
-        //     tokenString = strings.TrimPrefix(tokenString, "Bearer ")
-        // } else {
-        //     w.WriteHeader(http.StatusUnauthorized)
-        //     fmt.Fprint(w, `{"error": "Invalid authorization header"}`)
-        //     return
-        // }
 
         // Verify the token
         claims, err := VerifyToken(tokenCookie.Value)

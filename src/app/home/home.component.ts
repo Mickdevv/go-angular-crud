@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common'
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
 import { FormsModule } from '@angular/forms';
-import { fetchItems } from '../state/items/items.actions';
+import { fetchItems, deleteItem } from '../state/items/items.actions';
 import { Store } from '@ngrx/store';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -35,18 +35,11 @@ export class HomeComponent {
   }
 
   ngOnInit(): void {
-    // this.fetchData()
     this.store.dispatch(fetchItems.submit());
   }
 
-  fetchData() {
-    this.apiService.getData().subscribe({
-      next: response => {
-        this.data = response
-      },
-      error: err => {
-        console.error("Error fetching data ", err)
-      },
-    })
+
+  deleteItem(id: number) {
+    this.store.dispatch(deleteItem.submit({ id: id }))
   }
 }

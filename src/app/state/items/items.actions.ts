@@ -10,29 +10,38 @@ export const fetchItems = createActionGroup({
     }
 })
 
-export const addItem = createActionGroup({
-    source: 'Items',
+export const deleteItem = createActionGroup({
+    source: 'Delete item',
     events: {
-        submit: props<{ item: Item }>(),
-        success: props<{ item: Item }>(),
+        submit: props<{ id: number }>(),
+        success: props<{ id: number }>(),
         error: props<{ error: any }>(),
     }
 })
 
-export const updateItem = createActionGroup({
-    source: 'Items',
-    events: {
-        submit: props<{ item: Item }>(),
-        success: props<{ item: Item }>(),
-        error: props<{ error: any }>(),
-    }
-})
+// export const addItem = createActionGroup({
+//     source: 'Items',
+//     events: {
+//         submit: props<{ item: Item }>(),
+//         success: props<{ item: Item }>(),
+//         error: props<{ error: any }>(),
+//     }
+// })
 
-export const removeItem = createActionGroup({
-    source: 'Items',
-    events: {
-        submit: props<{ item: Item }>(),
-        success: props<{ item: Item }>(),
-        error: props<{ error: any }>(),
-    }
-})
+// export const updateItem = createActionGroup({
+//     source: 'Items',
+//     events: {
+//         submit: props<{ item: Item }>(),
+//         success: props<{ item: Item }>(),
+//         error: props<{ error: any }>(),
+//     }
+// })
+
+// export const removeItem = createActionGroup({
+//     source: 'Items',
+//     events: {
+//         submit: props<{ item: Item }>(),
+//         success: props<{ item: Item }>(),
+//         error: props<{ error: any }>(),
+//     }
+// })

@@ -6,8 +6,6 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideEffects } from '@ngrx/effects'
-import { itemsReducer } from './state/items/items.reducers';
-import { itemEffects } from './state/items/items.state';
 import { effects, reducers } from './state/app.state';
 
 export const appConfig: ApplicationConfig = {
