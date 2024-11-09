@@ -32,6 +32,15 @@ func main() {
 	http.HandleFunc("OPTIONS /api/items/{id}/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
+	http.HandleFunc("OPTIONS /api/items/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	http.HandleFunc("OPTIONS /api/login/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	http.HandleFunc("OPTIONS /api/register/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
 
 	// Apply CORS middleware to /api/login
 	http.HandleFunc("POST /api/login/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {

@@ -214,7 +214,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			Value:    tokenString,
 			Expires:  tokenExpiration,
 			HttpOnly: false,         // Ensures cookie is inaccessible to JavaScript
-			SameSite: http.SameSiteNoneMode, 
+			SameSite: http.SameSiteLaxMode, 
 			Path:     "/",
 			Secure: false,
 		})
