@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Item } from '../models/todo.model';
 
 @Injectable({
@@ -21,6 +21,7 @@ export class ApiService {
   }
 
   deleteItem(id: number): Observable<any> {
+    // return of(1);
     return this.http.delete<Number>(this.api_URL + id + "/", { withCredentials: true });
   }
 }

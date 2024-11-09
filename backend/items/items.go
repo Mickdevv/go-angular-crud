@@ -117,7 +117,17 @@ func RemoveItem(w http.ResponseWriter, r *http.Request) {
 		return 
 	}
 	fmt.Println(2)
-	db.RemoveItem(int64(item_id))
+	err = db.RemoveItem(int64(item_id))
+	if err != nil {
+		fmt.Println("Delete failed", err)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(item.ID)
+	if err != nil {
+		fmt.Println("Encoding item failed", err)
+		return
+	}
 	return
 }
 func UpdateItem(w http.ResponseWriter, r *http.Request) {

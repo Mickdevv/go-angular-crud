@@ -5,6 +5,7 @@ import (
 	"go-angular/auth"
 	"go-angular/db"
 	"go-angular/items"
+	"log"
 	"net/http"
 )
 
@@ -28,6 +29,9 @@ func main() {
 	http.HandleFunc("DELETE /api/items/{id}/", corsMiddleware(auth.ProtectRoute(func(w http.ResponseWriter, r *http.Request) {
 		items.RemoveItem(w, r)
 	})))
+	http.HandleFunc("OPTIONS /api/items/{id}/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
 
 	// Apply CORS middleware to /api/login
 	http.HandleFunc("POST /api/login/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
@@ -56,10 +60,15 @@ func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		// Set CORS headers to allow any origin (or restrict it to your frontend domain)
 		origin := r.Header.Get("Origin")
 
+		log.Println("Request Origin:", origin)
+		log.Println("Request Method:", r.Method)
+		log.Println("Request Headers:", r.Header)
+
+
 		// Allow requests from specific origins (e.g., frontend at http://localhost:4200)
-		if origin == "http://localhost:4200" || origin == "http://localhost:3000" || origin == "http://127.0.0.1:3000" || origin == "http://127.0.0.1:4200" {
-			w.Header().Set("Access-Control-Allow-Origin", origin)
-		}
+		// if origin == "http://localhost:4200" || origin == "http://localhost:3000" || origin == "http://127.0.0.1:3000" || origin == "http://127.0.0.1:4200" {
+		// }
+		w.Header().Set("Access-Control-Allow-Origin", origin)
 		
 		// w.Header().Set("Access-Control-Allow-Origin", "*")
 		// Allow methods and headers for cross-origin requests

@@ -43,7 +43,7 @@ export const itemsReducer = createReducer(
     })),
     on(deleteItem.success, (state, { id }) => ({
         ...state,
-        items: [...state.items.filter((item) => item.id == Number(id))],
+        items: [...state.items.filter((item) => item.id != Number(id))],
         loading: false
     })),
     on(deleteItem.error, (state, { error }) => ({
