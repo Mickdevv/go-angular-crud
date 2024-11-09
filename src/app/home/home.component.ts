@@ -10,6 +10,7 @@ import { Store } from '@ngrx/store';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { selectItems, selectItemsError, selectItemsLoading } from '../state/items/items.selectors';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +22,7 @@ import { selectItems, selectItemsError, selectItemsLoading } from '../state/item
 export class HomeComponent {
   private readonly store = inject(Store);
 
+
   data: any
   checked = false
 
@@ -28,7 +30,7 @@ export class HomeComponent {
   itemsLoading = this.store.selectSignal(selectItemsLoading)
   itemsError = this.store.selectSignal(selectItemsError)
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private router: Router) {
     effect(() => {
       console.warn(this.items())
     })
@@ -38,6 +40,9 @@ export class HomeComponent {
     this.store.dispatch(fetchItems.submit());
   }
 
+  editItem(id: number) {
+    this.router.navigate(['/edit', id]);
+  }
 
   deleteItem(id: number) {
     this.store.dispatch(deleteItem.submit({ id: id }))

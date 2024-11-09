@@ -10,7 +10,7 @@ export interface ItemsState {
 
 export const itemsInitialState: ItemsState = {
     items: [],
-    error: {},
+    error: undefined,
     loading: false
 }
 

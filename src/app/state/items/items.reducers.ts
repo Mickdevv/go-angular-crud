@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { itemsInitialState } from "./items.state";
-import { fetchItems, deleteItem } from "./items.actions";
+import { fetchItems, deleteItem, addItem } from "./items.actions";
 
 export const itemsReducer = createReducer(
     itemsInitialState,
@@ -21,21 +21,20 @@ export const itemsReducer = createReducer(
         loading: false
     })),
 
-    // on(addItem.submit, (state, { item }) => ({
-    //     ...state,
-    //     items: [...state.items, item],
-    //     loading: true
-    // })),
-    // on(addItem.success, (state, { item }) => ({
-    //     ...state,
-    //     items: [...state.items, item],
-    //     loading: false
-    // })),
-    // on(addItem.error, (state, { error }) => ({
-    //     ...state,
-    //     error: error,
-    //     loading: false
-    // })),
+    on(addItem.submit, (state) => ({
+        ...state,
+        loading: true
+    })),
+    on(addItem.success, (state, { item }) => ({
+        ...state,
+        items: [...state.items, item],
+        loading: false
+    })),
+    on(addItem.error, (state, { error }) => ({
+        ...state,
+        error: error,
+        loading: false
+    })),
 
     on(deleteItem.submit, (state) => ({
         ...state,

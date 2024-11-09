@@ -17,11 +17,16 @@ export class ApiService {
   }
 
   getItemById(id: string): Observable<any> {
-    return this.http.get<Item>(this.api_URL + id + "/", { withCredentials: true })
+    return this.http.get<Item>(`${this.api_URL}${id}/`, { withCredentials: true })
+  }
+
+  addItem(item: Item): Observable<any> {
+    // return of(1);
+    return this.http.post<Item>(this.api_URL, item, { withCredentials: true });
   }
 
   deleteItem(id: number): Observable<any> {
     // return of(1);
-    return this.http.delete<Number>(this.api_URL + id + "/", { withCredentials: true });
+    return this.http.delete<Number>(`${this.api_URL}${id}/`, { withCredentials: true });
   }
 }

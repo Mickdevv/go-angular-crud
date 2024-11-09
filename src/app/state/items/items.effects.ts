@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { ApiService } from "../../services/api.service";
-import { fetchItems, deleteItem } from "./items.actions";
+import { fetchItems, deleteItem, addItem, updateItem } from "./items.actions";
 import { catchError, delay, exhaustMap, map, mergeMap, of, switchMap, tap } from "rxjs";
 import { Item } from "../../models/todo.model";
 
@@ -38,7 +38,41 @@ export class ItemsEffects {
                     map((id) => deleteItem.success({ id })),
 
                     // On error, dispatch `fetchItems.error` with error details
-                    catchError((error) => of(fetchItems.error({ error })))
+                    catchError((error) => of(deleteItem.error({ error })))
+                )
+            )
+        )
+    );
+
+    addItem = createEffect(() =>
+        this.actions.pipe(
+            ofType(addItem.submit),
+            exhaustMap(({ item }) => // Destructure to get `id` from action
+                this.itemsService.addItem(item).pipe(
+                    delay(2000), // Optional delay to simulate loading or timing
+
+                    // On success, dispatch `deleteItem.success` with the deleted item's ID
+                    map((id) => addItem.success({ item })),
+
+                    // On error, dispatch `fetchItems.error` with error details
+                    catchError((error) => of(addItem.error({ error })))
+                )
+            )
+        )
+    );
+
+    updateItem = createEffect(() =>
+        this.actions.pipe(
+            ofType(updateItem.submit),
+            exhaustMap(({ item }) => // Destructure to get `id` from action
+                this.itemsService.addItem(item).pipe(
+                    delay(2000), // Optional delay to simulate loading or timing
+
+                    // On success, dispatch `deleteItem.success` with the deleted item's ID
+                    map((id) => updateItem.success({ item })),
+
+                    // On error, dispatch `fetchItems.error` with error details
+                    catchError((error) => of(updateItem.error({ error })))
                 )
             )
         )

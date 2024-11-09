@@ -19,29 +19,20 @@ export const deleteItem = createActionGroup({
     }
 })
 
-// export const addItem = createActionGroup({
-//     source: 'Items',
-//     events: {
-//         submit: props<{ item: Item }>(),
-//         success: props<{ item: Item }>(),
-//         error: props<{ error: any }>(),
-//     }
-// })
+export const addItem = createActionGroup({
+    source: 'Add item',
+    events: {
+        submit: props<{ item: Item }>(),
+        success: props<{ item: Item }>(),
+        error: props<{ error: any }>(),
+    }
+})
 
-// export const updateItem = createActionGroup({
-//     source: 'Items',
-//     events: {
-//         submit: props<{ item: Item }>(),
-//         success: props<{ item: Item }>(),
-//         error: props<{ error: any }>(),
-//     }
-// })
-
-// export const removeItem = createActionGroup({
-//     source: 'Items',
-//     events: {
-//         submit: props<{ item: Item }>(),
-//         success: props<{ item: Item }>(),
-//         error: props<{ error: any }>(),
-//     }
-// })
+export const updateItem = createActionGroup({
+    source: 'Update item',
+    events: {
+        submit: props<{ item: Item }>(),
+        success: props<{ item: Item }>(),
+        error: props<{ error: any }>(),
+    }
+})
