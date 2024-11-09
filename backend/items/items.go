@@ -11,11 +11,13 @@ import (
 )
 
 type AddItemRequest struct {
-	Task  string `json:"task"`
+	Title  string `json:"title"`
+	Description  string `json:"description"`
 	Done  bool `json:"done"`
 }
 type UpdateItemRequest struct {
-	Task  string `json:"task"`
+	Title  string `json:"title"`
+	Description  string `json:"description"`
 	Done  bool `json:"done"`
 }
 
@@ -79,7 +81,7 @@ func AddItem(w http.ResponseWriter, r *http.Request) {
 	var newItem AddItemRequest
 	json.NewDecoder(r.Body).Decode(&newItem)
 
-	newItemAdd := models.Item{Task: newItem.Task, Done: newItem.Done, OwnerId: user.ID} 
+	newItemAdd := models.Item{Title: newItem.Title, Description: newItem.Description, Done: newItem.Done, OwnerId: user.ID} 
 
 	newItemId, err := db.CreateItem(newItemAdd)
 	if err != nil {
@@ -159,7 +161,7 @@ func UpdateItem(w http.ResponseWriter, r *http.Request) {
 	var updateRequest AddItemRequest
 	json.NewDecoder(r.Body).Decode(&updateRequest)
 
-	updatedItem := models.Item{ID: item.ID, OwnerId: item.OwnerId, Done: updateRequest.Done, Task: updateRequest.Task}
+	updatedItem := models.Item{ID: item.ID, OwnerId: item.OwnerId, Description: item.Description, Done: updateRequest.Done, Title: updateRequest.Title}
  	db.UpdateItem(updatedItem)
 	return
 }

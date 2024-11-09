@@ -1,11 +1,14 @@
 <h2>Tasks : </h2>
 
 <div class="flex-container">
-    <div *ngIf="!itemsLoading() && items().length > 0">
+    <div *ngIf="!itemsLoading() && items()">
         <p-card *ngFor="let item of items(); index as i" header="Simple Card" class="my-1 card-container">
             <div class="my-5">
                 <p class="m-0">
-                    {{ item.task }}, {{ item.id }}
+                    {{ item.title }}, {{ item.id }}
+                </p>
+                <p class="m-0">
+                    {{ item.description }}
                 </p>
                 <!-- Done: <p-checkbox [(ngModel)]="item.done" [binary]="true" inputId="binary" /> -->
                  Done : {{item.done}}
@@ -32,6 +35,6 @@
     <div *ngIf="itemsLoading()">
         <p-progressSpinner ariaLabel="loading" />
     </div>
-    <div *ngIf="items().length == 0">
-        <p>Loaded but empty</p>
+    <div *ngIf="!itemsLoading() && (!items() || items().length == 0)">
+        No items to display
     </div>

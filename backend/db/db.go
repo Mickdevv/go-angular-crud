@@ -33,7 +33,8 @@ func createTables() {
     createItemsTable := `
     CREATE TABLE IF NOT EXISTS items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        task TEXT NOT NULL,
+        title TEXT NOT NULL,
+        description TEXT NOT NULL,
         done BOOLEAN NOT NULL DEFAULT 0,
         user_id INTEGER NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id)
@@ -111,9 +112,9 @@ func CreateItem(item models.Item) (int64, error) {
         return 0, err
     }
 
-    query := `INSERT INTO items (task, done, user_id) VALUES (?, ?, ?)`
+    query := `INSERT INTO items (title, description, done, user_id) VALUES (?, ?, ?, ?)`
     fmt.Println(item)
-    result, err := Database.Exec(query, item.Task, item.Done, item.OwnerId)
+    result, err := Database.Exec(query, item.Title, item.Description, item.Done, item.OwnerId)
     if err != nil {
         fmt.Println(err)
         return 0, err
@@ -148,9 +149,9 @@ func RemoveItem(id int64) error {
 }
 
 func UpdateItem(item models.Item) error {
-    query := "UPDATE items SET task = ?, done = ? WHERE id = ?"
+    query := "UPDATE items SET title = ?, done = ? WHERE id = ?"
         
-    result, err := Database.Exec(query, item.Task, item.Done, item.ID)
+    result, err := Database.Exec(query, item.Title, item.Done, item.ID)
     if err != nil {
         fmt.Println("delete error", err)
         return err
@@ -174,7 +175,7 @@ func UpdateItem(item models.Item) error {
 
 func GetUserItems(userId uint64) ([]models.Item, error) {
     var items []models.Item
-    query := `SELECT id, task, done, user_id FROM items WHERE user_id = ?`
+    query := `SELECT id, title, description, done, user_id FROM items WHERE user_id = ?`
     rows, err := Database.Query(query, userId)
     if err != nil {
         fmt.Println("Query error", err)
@@ -187,7 +188,8 @@ func GetUserItems(userId uint64) ([]models.Item, error) {
 
         err := rows.Scan(
             &item.ID,
-            &item.Task,
+            &item.Title,
+            &item.Description,
             &item.Done,
             &item.OwnerId,
         )
@@ -213,7 +215,7 @@ func GetUserItems(userId uint64) ([]models.Item, error) {
 
 func GetUserItem(userId uint64, itemId uint64) (models.Item, error) {
 
-    query := `SELECT id, task, done, user_id FROM items WHERE user_id = ? AND id = ?`
+    query := `SELECT id, title, description, done, user_id FROM items WHERE user_id = ? AND id = ?`
     rows, err := Database.Query(query, userId, itemId)
     if err != nil {
         fmt.Println("Query error", err)
@@ -226,7 +228,8 @@ func GetUserItem(userId uint64, itemId uint64) (models.Item, error) {
 
         err := rows.Scan(
             &item.ID,
-            &item.Task,
+            &item.Title,
+            &item.Description,
             &item.Done,
             &item.OwnerId,
         )

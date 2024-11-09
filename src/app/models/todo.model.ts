@@ -1,5 +1,6 @@
 export interface Item {
-    task: string,
+    title: string,
+    description: string,
     done: boolean,
     ownerId: number,
     id: number
