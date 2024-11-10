@@ -16,7 +16,7 @@ export class ApiService {
     return this.http.get<Item>(this.api_URL, { withCredentials: true })
   }
 
-  getItemById(id: string): Observable<any> {
+  getItemById(id: number): Observable<any> {
     return this.http.get<Item>(`${this.api_URL}${id}/`, { withCredentials: true })
   }
 

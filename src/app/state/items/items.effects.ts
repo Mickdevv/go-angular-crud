@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { ApiService } from "../../services/api.service";
-import { fetchItems, deleteItem, addItem, updateItem } from "./items.actions";
+import { fetchItems, deleteItem, addItem, updateItem, fetchItem } from "./items.actions";
 import { catchError, delay, exhaustMap, map, mergeMap, of, switchMap, tap } from "rxjs";
 import { Item } from "../../models/todo.model";
 
@@ -15,7 +15,7 @@ export class ItemsEffects {
             ofType(fetchItems.submit),
             switchMap(() =>
                 this.itemsService.getItems().pipe(
-                    delay(2000),
+                    delay(1000),
                     // On success, dispatch the fetchItems.success action
                     tap(items => console.log('Fetched items:', items)),
                     map((items: Item[]) => fetchItems.success({ items: items })),
@@ -27,12 +27,29 @@ export class ItemsEffects {
         )
     )
 
+    getItem = createEffect(() =>
+        this.actions.pipe(
+            ofType(fetchItem.submit),
+            switchMap(({ id }) =>
+                this.itemsService.getItemById(id).pipe(
+                    delay(1000),
+                    // On success, dispatch the fetchItems.success action
+                    tap(item => console.log('Fetched item:', item)),
+                    map((item: Item) => fetchItem.success({ item: item })),
+
+                    // On error, dispatch the submitItemFailure action
+                    catchError((error) => of(fetchItem.error({ error })))
+                )
+            )
+        )
+    )
+
     deleteItem = createEffect(() =>
         this.actions.pipe(
             ofType(deleteItem.submit),
             exhaustMap(({ id }) => // Destructure to get `id` from action
                 this.itemsService.deleteItem(id).pipe(
-                    delay(2000), // Optional delay to simulate loading or timing
+                    delay(1000), // Optional delay to simulate loading or timing
 
                     // On success, dispatch `deleteItem.success` with the deleted item's ID
                     map((id) => deleteItem.success({ id })),
@@ -49,7 +66,7 @@ export class ItemsEffects {
             ofType(addItem.submit),
             exhaustMap(({ item }) => // Destructure to get `id` from action
                 this.itemsService.addItem(item).pipe(
-                    delay(2000), // Optional delay to simulate loading or timing
+                    delay(1000), // Optional delay to simulate loading or timing
 
                     // On success, dispatch `deleteItem.success` with the deleted item's ID
                     map((id) => addItem.success({ item })),
@@ -66,7 +83,7 @@ export class ItemsEffects {
             ofType(updateItem.submit),
             exhaustMap(({ item }) => // Destructure to get `id` from action
                 this.itemsService.addItem(item).pipe(
-                    delay(2000), // Optional delay to simulate loading or timing
+                    delay(1000), // Optional delay to simulate loading or timing
 
                     // On success, dispatch `deleteItem.success` with the deleted item's ID
                     map((id) => updateItem.success({ item })),

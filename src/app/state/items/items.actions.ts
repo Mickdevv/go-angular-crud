@@ -9,6 +9,14 @@ export const fetchItems = createActionGroup({
         error: props<{ error: any }>(),
     }
 })
+export const fetchItem = createActionGroup({
+    source: 'Fetch item',
+    events: {
+        submit: props<{ id: number }>(),
+        success: props<{ item: Item }>(),
+        error: props<{ error: any }>(),
+    }
+})
 
 export const deleteItem = createActionGroup({
     source: 'Delete item',

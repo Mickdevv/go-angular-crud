@@ -8,7 +8,10 @@ export const selectItems = createSelector(
     selectItemsState,
     (s) => s.items
 )
-
+export const selectItem = createSelector(
+    selectItemsState,
+    (s) => s.selectedItem
+)
 export const selectItemsLoading = createSelector(
     selectItemsState,
     (s) => s.loading

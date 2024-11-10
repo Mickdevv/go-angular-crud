@@ -30,7 +30,7 @@ export class HomeComponent {
   itemsLoading = this.store.selectSignal(selectItemsLoading)
   itemsError = this.store.selectSignal(selectItemsError)
 
-  constructor(private apiService: ApiService, private router: Router) {
+  constructor(private router: Router) {
     effect(() => {
       console.warn(this.items())
     })

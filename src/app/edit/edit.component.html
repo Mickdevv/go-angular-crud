@@ -1,0 +1,13 @@
+<div *ngIf="!itemsLoading()">
+    <form [formGroup]="editItem">
+        <label for="title">Title: </label>
+        <input id="title" type="text" formControlName="title">
+    <br>
+    <label for="description">Description: </label>
+    <textarea id="description" formControlName="description"></textarea> 
+    <br>
+    
+        <label for="done">Done: </label>
+        <input id="done" type="checkbox" formControlName="done">
+    </form>
+</div>

@@ -4,12 +4,14 @@ import { ItemsEffects } from './items.effects'
 
 export interface ItemsState {
     items: Item[],
+    selectedItem?: Item,
     error: any,
     loading: boolean
 }
 
 export const itemsInitialState: ItemsState = {
     items: [],
+    selectedItem: undefined,
     error: undefined,
     loading: false
 }
