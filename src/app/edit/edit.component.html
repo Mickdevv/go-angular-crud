@@ -9,5 +9,6 @@
     
         <label for="done">Done: </label>
         <input id="done" type="checkbox" formControlName="done">
+        <button type="submit" [disabled]="editItem.invalid">Save</button>
     </form>
 </div>

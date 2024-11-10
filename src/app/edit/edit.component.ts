@@ -16,9 +16,6 @@ import { CommonModule } from '@angular/common';
 export class EditComponent {
   private readonly store = inject(Store);
 
-  data: any
-  checked = false
-
   selectedItem = this.store.selectSignal(selectItem)
   itemsLoading = this.store.selectSignal(selectItemsLoading)
   itemsError = this.store.selectSignal(selectItemsError)
