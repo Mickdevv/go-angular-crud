@@ -93,6 +93,7 @@ export class HeaderComponent {
 
     logout() {
         this.store.dispatch(logout.submit())
+
         this.router.navigate(['/login'])
     }
 }

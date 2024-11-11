@@ -3,7 +3,7 @@ import { AuthService } from '../services/auth.service'
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { UserWithToken, UserLoginRequest } from '../models/user.model'
 import { Store } from '@ngrx/store';
-import { login } from '../state/user/user.actions';
+import { login, logout } from '../state/user/user.actions';
 import { selectUserLoading, selectUserSuccess } from '../state/user/user.selectors';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';

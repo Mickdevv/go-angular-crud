@@ -35,5 +35,9 @@ export const userReducer = createReducer(
     on(logout.submit, (state) => ({
         ...state,
         userInitialState
+    })),
+    on(logout.resetSuccess, (state) => ({
+        ...state,
+        success: false
     }))
 )

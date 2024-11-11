@@ -22,6 +22,7 @@ export const register = createActionGroup({
 export const logout = createActionGroup({
     source: 'user logout',
     events: {
-        submit: emptyProps()
+        submit: emptyProps(),
+        resetSuccess: emptyProps()
     }
 })
