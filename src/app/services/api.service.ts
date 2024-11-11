@@ -25,6 +25,11 @@ export class ApiService {
     return this.http.post<Item>(this.api_URL, item, { withCredentials: true });
   }
 
+  updateItem(item: Item): Observable<any> {
+    // return of(1);
+    return this.http.put<Item>(`${this.api_URL}${item.id}/`, item, { withCredentials: true });
+  }
+
   deleteItem(id: number): Observable<any> {
     // return of(1);
     return this.http.delete<Number>(`${this.api_URL}${id}/`, { withCredentials: true });

@@ -98,4 +98,4 @@ func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
 
 func EnableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	}
+}

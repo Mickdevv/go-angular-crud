@@ -82,11 +82,11 @@ export class ItemsEffects {
         this.actions.pipe(
             ofType(updateItem.submit),
             exhaustMap(({ item }) => // Destructure to get `id` from action
-                this.itemsService.addItem(item).pipe(
+                this.itemsService.updateItem(item).pipe(
                     delay(1000), // Optional delay to simulate loading or timing
 
                     // On success, dispatch `deleteItem.success` with the deleted item's ID
-                    map((id) => updateItem.success({ item })),
+                    map((item) => updateItem.success({ item })),
 
                     // On error, dispatch `fetchItems.error` with error details
                     catchError((error) => of(updateItem.error({ error })))

@@ -2,9 +2,11 @@ import { Component, effect, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectItemsLoading, selectItemsError, selectItem } from '../state/items/items.selectors';
-import { fetchItem } from '../state/items/items.actions';
+import { fetchItem, updateItem } from '../state/items/items.actions';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Item } from '../models/todo.model';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-edit',
@@ -26,7 +28,7 @@ export class EditComponent {
     done: new FormControl(false),
   })
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute, private itemsService: ApiService) {
     effect(() => {
       const item = this.selectedItem()
       if (item) {
@@ -42,5 +44,18 @@ export class EditComponent {
   ngOnInit() {
     const itemId = Number(this.route.snapshot.paramMap.get('id'));
     this.store.dispatch(fetchItem.submit({ id: itemId }))
+  }
+
+  submitUpdate() {
+    if (this.selectedItem() != undefined) {
+      const updatedItem: Item = {
+        title: this.editItem.value.title || '',
+        description: this.editItem.value.description || '',
+        done: this.editItem.value.done || false,
+        ownerId: this.selectedItem()!.ownerId,
+        id: this.selectedItem()!.id,
+      }
+      this.store.dispatch(updateItem.submit({ item: updatedItem }))
+    }
   }
 }
