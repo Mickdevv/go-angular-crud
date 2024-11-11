@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { BadgeModule } from 'primeng/badge';
@@ -6,6 +6,9 @@ import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 import { RippleModule } from 'primeng/ripple';
+import { logout } from '../state/user/user.actions';
+import { Store } from '@ngrx/store';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-header',
@@ -15,6 +18,11 @@ import { RippleModule } from 'primeng/ripple';
     styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
+
+    private readonly store = inject(Store)
+
+    constructor(private router: Router) { }
+
     items: MenuItem[] | undefined;
     itemsEnd: MenuItem[] | undefined;
 
@@ -81,5 +89,10 @@ export class HeaderComponent {
                 routerLink: ['/login']
             },
         ];
+    }
+
+    logout() {
+        this.store.dispatch(logout.submit())
+        this.router.navigate(['/login'])
     }
 }

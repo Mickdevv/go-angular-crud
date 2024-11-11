@@ -7,6 +7,7 @@ export interface UserState {
     refresh: string,
     loading: boolean,
     error: any
+    success: boolean
 }
 
 export const userInitialState: UserState = {
@@ -14,7 +15,8 @@ export const userInitialState: UserState = {
     access: "",
     refresh: "",
     loading: false,
-    error: null
+    error: null,
+    success: false
 }
 
 export const userEffects: Type<unknown>[] = [

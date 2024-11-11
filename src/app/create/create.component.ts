@@ -19,9 +19,9 @@ export class CreateComponent {
   private readonly store = inject(Store);
 
   constructor(private router: Router) {
-    if (!this.userToken()) {
-      this.router.navigate(['/login'])
-    }
+    // if (!this.userToken()) {
+    //   this.router.navigate(['/login'])
+    // }
   }
 
   userToken: Signal<any> = this.store.selectSignal(selectUserToken)

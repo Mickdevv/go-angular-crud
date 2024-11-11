@@ -31,9 +31,9 @@ export class EditComponent {
   })
 
   constructor(private route: ActivatedRoute, private itemsService: ApiService, private router: Router) {
-    if (!this.userToken()) {
-      this.router.navigate(['/login'])
-    }
+    // if (!this.userToken()) {
+    //   this.router.navigate(['/login'])
+    // }
     effect(() => {
       const item = this.selectedItem()
       if (item) {

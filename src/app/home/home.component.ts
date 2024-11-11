@@ -32,16 +32,15 @@ export class HomeComponent {
   itemsError = this.store.selectSignal(selectItemsError)
 
   constructor(private router: Router) {
-    if (!this.userToken()) {
-      this.router.navigate(['/login']);
-    }
+    // if (!this.userToken().access) {
+    //   this.router.navigate(['/login']);
+    // }
     effect(() => {
       console.warn(this.items())
     })
   }
 
   ngOnInit(): void {
-
     this.store.dispatch(fetchItems.submit());
   }
 

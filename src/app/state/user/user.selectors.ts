@@ -1,6 +1,5 @@
 import { createSelector } from "@ngrx/store";
 import { AppState } from "../app.state";
-import { UserState } from "./user.state";
 
 export const selectUserState = (state: AppState) =>
     state.user
@@ -20,4 +19,8 @@ export const selectUserLoading = createSelector(
 export const selectUserError = createSelector(
     selectUserState,
     (s) => s.error
+)
+export const selectUserSuccess = createSelector(
+    selectUserState,
+    (s) => s.success
 )
