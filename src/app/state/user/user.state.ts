@@ -3,14 +3,16 @@ import { UserEffects } from "./user.effects"
 
 export interface UserState {
     username: string,
-    token: string,
+    access: string,
+    refresh: string,
     loading: boolean,
     error: any
 }
 
 export const userInitialState: UserState = {
     username: "",
-    token: "",
+    access: "",
+    refresh: "",
     loading: false,
     error: null
 }

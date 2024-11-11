@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { User } from '../models/user.model'
+import { UserWithToken, UserLoginRequest, UserRegisterRequest } from '../models/user.model'
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -12,11 +12,11 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(user: User): Observable<any> {
+  login(user: UserLoginRequest): Observable<UserWithToken> {
     return this.http.post<any>(`${this.base_url}/login/`, user, { withCredentials: true });
   }
 
-  register(user: User): Observable<any> {
+  register(user: UserRegisterRequest): Observable<any> {
     return this.http.post<any>(`${this.base_url}/register/`, user, { withCredentials: true });
   }
 }

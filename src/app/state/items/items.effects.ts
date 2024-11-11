@@ -69,7 +69,7 @@ export class ItemsEffects {
                     delay(1000), // Optional delay to simulate loading or timing
 
                     // On success, dispatch `deleteItem.success` with the deleted item's ID
-                    map((id) => addItem.success({ item })),
+                    map(() => addItem.success({ item })),
 
                     // On error, dispatch `fetchItems.error` with error details
                     catchError((error) => of(addItem.error({ error })))

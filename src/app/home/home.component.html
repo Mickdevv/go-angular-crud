@@ -19,16 +19,15 @@
                     pRipple 
                     label="Edit" 
                     class="p-button-success mr-2"
-                    (click)="editItem(item.id)">
+                    (click)="editItem(item.id!)">
                 </button>
                 <button 
                     pButton 
                     pRipple 
                     label="Delete" 
                     class="p-button-danger"
-                    (click)="deleteItem(item.id)"
+                    (click)="deleteItem(item.id!)"
                     >
-                    
                 </button>
             </div>
         </p-card>

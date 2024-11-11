@@ -1,5 +1,5 @@
 
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, Signal } from '@angular/core';
 import { ApiService } from '../services/api.service'
 import { CommonModule } from '@angular/common'
 import { CardModule } from 'primeng/card';
@@ -11,6 +11,7 @@ import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { selectItems, selectItemsError, selectItemsLoading } from '../state/items/items.selectors';
 import { Router } from '@angular/router';
+import { selectUserToken } from '../state/user/user.selectors';
 
 @Component({
   selector: 'app-home',
@@ -22,21 +23,25 @@ import { Router } from '@angular/router';
 export class HomeComponent {
   private readonly store = inject(Store);
 
-
   data: any
   checked = false
 
+  userToken: Signal<any> = this.store.selectSignal(selectUserToken)
   items = this.store.selectSignal(selectItems)
   itemsLoading = this.store.selectSignal(selectItemsLoading)
   itemsError = this.store.selectSignal(selectItemsError)
 
   constructor(private router: Router) {
+    if (!this.userToken()) {
+      this.router.navigate(['/login']);
+    }
     effect(() => {
       console.warn(this.items())
     })
   }
 
   ngOnInit(): void {
+
     this.store.dispatch(fetchItems.submit());
   }
 

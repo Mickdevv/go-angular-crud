@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
-import { User } from '../models/user.model';
+import { UserWithToken, UserRegisterRequest } from '../models/user.model';
 
 @Component({
   selector: 'app-register',
@@ -11,26 +11,25 @@ import { User } from '../models/user.model';
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   registerForm = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),  // username must be at least 3 characters
-    password1: new FormControl('', [Validators.required, Validators.minLength(5)]),   // password must be at least 6 characters
-    password2: new FormControl('', [Validators.required, Validators.minLength(5)])   // password must be at least 6 characters
+    password1: new FormControl('', [Validators.required, Validators.minLength(6)]),   // password must be at least 6 characters
+    password2: new FormControl('', [Validators.required, Validators.minLength(6)])   // password must be at least 6 characters
   });
 
   onSubmit() {
     if (this.registerForm.invalid) {
       return;
     }
-  
-    const user: any = {
+
+    const user: UserRegisterRequest = {
       username: this.registerForm.value.username ?? '',  // Default to empty string if null
       password1: this.registerForm.value.password1 ?? '',
       password2: this.registerForm.value.password2 ?? ''
     };
-    
-    console.log(this.registerForm.value)
+
     this.authService.register(user).subscribe({
       next: response => {
         console.log('Register success : ', response)

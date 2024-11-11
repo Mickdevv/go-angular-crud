@@ -32,6 +32,7 @@ type LoginRequest struct {
 type LoginResponse struct {
     Access  string `json:"access"`
     Refresh string `json:"refresh"`
+	Username string `json:"username"`
 }
 
 func HashPassword(password string) (string, error) {
@@ -222,6 +223,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		loginResponse.Access = tokenString
 		loginResponse.Refresh = tokenString
+		loginResponse.Username = databaseUser.Username
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(loginResponse)
 		// fmt.Fprint(w, tokenString)

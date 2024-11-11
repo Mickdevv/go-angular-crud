@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AuthService } from '../services/auth.service'
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { User } from '../models/user.model'
+import { UserWithToken, UserLoginRequest } from '../models/user.model'
+import { Store } from '@ngrx/store';
+import { login } from '../state/user/user.actions';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +14,8 @@ import { User } from '../models/user.model'
 })
 export class LoginComponent {
 
-  constructor(private authService: AuthService) {}
+  private readonly store = inject(Store);
+  constructor(private authService: AuthService) { }
 
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),  // username must be at least 3 characters
@@ -23,20 +26,21 @@ export class LoginComponent {
     if (this.loginForm.invalid) {
       return;
     }
-  
-    const user: User = {
+
+    const user: UserLoginRequest = {
       username: this.loginForm.value.username ?? '',  // Default to empty string if null
       password: this.loginForm.value.password ?? ''
     };
-    
+
     console.log(this.loginForm.value)
-    this.authService.login(user).subscribe({
-      next: response => {
-        console.log('Login success : ', response)
-      },
-      error: err => {
-        console.error("Error logging in : ", err)
-      },
-    })
+    this.store.dispatch(login.submit({ user }));
+    // this.authService.login(user).subscribe({
+    //   next: response => {
+    //     console.log('Login success : ', response)
+    //   },
+    //   error: err => {
+    //     console.error("Error logging in : ", err)
+    //   },
+    // })
   }
 }

@@ -21,7 +21,7 @@ export class HeaderComponent {
     ngOnInit() {
         this.items = [
             {
-                label: 'Home',
+                label: 'List',
                 icon: 'pi pi-home',
                 routerLink: ['/']
             },

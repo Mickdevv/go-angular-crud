@@ -1,5 +1,5 @@
-import { Component, effect, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, effect, inject, Signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { selectItemsLoading, selectItemsError, selectItem } from '../state/items/items.selectors';
 import { fetchItem, updateItem } from '../state/items/items.actions';
@@ -7,6 +7,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Item } from '../models/todo.model';
 import { ApiService } from '../services/api.service';
+import { selectUserToken } from '../state/user/user.selectors';
 
 @Component({
   selector: 'app-edit',
@@ -18,6 +19,7 @@ import { ApiService } from '../services/api.service';
 export class EditComponent {
   private readonly store = inject(Store);
 
+  userToken: Signal<any> = this.store.selectSignal(selectUserToken)
   selectedItem = this.store.selectSignal(selectItem)
   itemsLoading = this.store.selectSignal(selectItemsLoading)
   itemsError = this.store.selectSignal(selectItemsError)
@@ -28,7 +30,10 @@ export class EditComponent {
     done: new FormControl(false),
   })
 
-  constructor(private route: ActivatedRoute, private itemsService: ApiService) {
+  constructor(private route: ActivatedRoute, private itemsService: ApiService, private router: Router) {
+    if (!this.userToken()) {
+      this.router.navigate(['/login'])
+    }
     effect(() => {
       const item = this.selectedItem()
       if (item) {
@@ -42,6 +47,7 @@ export class EditComponent {
   }
 
   ngOnInit() {
+
     const itemId = Number(this.route.snapshot.paramMap.get('id'));
     this.store.dispatch(fetchItem.submit({ id: itemId }))
   }
