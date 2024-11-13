@@ -162,7 +162,7 @@ func UpdateItem(w http.ResponseWriter, r *http.Request) {
 	var updateRequest AddItemRequest
 	json.NewDecoder(r.Body).Decode(&updateRequest)
 
-	updatedItem := models.Item{ID: item.ID, OwnerId: item.OwnerId, Description: item.Description, Done: updateRequest.Done, Title: updateRequest.Title}
+	updatedItem := models.Item{ID: item.ID, OwnerId: item.OwnerId, Description: updateRequest.Description, Done: updateRequest.Done, Title: updateRequest.Title}
  	db.UpdateItem(updatedItem)
 	return
 }

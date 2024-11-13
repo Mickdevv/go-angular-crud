@@ -8,11 +8,13 @@ import { CommonModule } from '@angular/common';
 import { Item } from '../../models/todo.model';
 import { ApiService } from '../../services/api.service';
 import { selectUserSuccess, selectUserToken } from '../../state/user/user.selectors';
+import { ButtonModule } from 'primeng/button';
+
 
 @Component({
   selector: 'app-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, ButtonModule],
   templateUrl: './edit.component.html',
   styleUrl: './edit.component.scss'
 })

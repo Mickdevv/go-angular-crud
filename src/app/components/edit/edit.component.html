@@ -1,5 +1,5 @@
 <div *ngIf="!itemsLoading()">
-    <form [formGroup]="editItem" (ngSubmit)="submitUpdate()">
+    <form [formGroup]="editItem">
         <label for="title">Title: </label>
         <input id="title" type="text" formControlName="title">
     <br>
@@ -8,6 +8,13 @@
     <br>
     <label for="done">Done: </label>
     <input id="done" type="checkbox" formControlName="done">
-    <button type="submit" [disabled]="editItem.invalid">Save</button>
-    </form>
+    <button 
+    pButton 
+    pRipple 
+    label="Save" 
+    class="p-button-success mr-2" 
+    type="submit"
+    [disabled]="editItem.invalid"
+    (click)="submitUpdate()"></button>    
+</form>
 </div>

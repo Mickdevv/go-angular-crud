@@ -6,8 +6,14 @@
     <label for="description">Description: </label>
     <textarea id="description" formControlName="description"></textarea> 
     <br>
-    
         <label for="done">Done: </label>
         <input id="done" type="checkbox" formControlName="done">
-        <button type="submit" [disabled]="createItem.invalid">Save</button>
+        <button 
+        pButton 
+        pRipple 
+        label="Save" 
+        class="p-button-success mr-2" 
+        type="submit"
+        [disabled]="createItem.invalid"
+        (click)="submitItem()"></button>
     </form>

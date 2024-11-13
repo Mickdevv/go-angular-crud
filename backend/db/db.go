@@ -149,11 +149,11 @@ func RemoveItem(id int64) error {
 }
 
 func UpdateItem(item models.Item) error {
-    query := "UPDATE items SET title = ?, done = ? WHERE id = ?"
+    query := "UPDATE items SET title = ?, done = ?, description = ? WHERE id = ?"
         
-    result, err := Database.Exec(query, item.Title, item.Done, item.ID)
+    result, err := Database.Exec(query, item.Title, item.Done, item.Description, item.ID)
     if err != nil {
-        fmt.Println("delete error", err)
+        fmt.Println("update error", err)
         return err
     }
 
@@ -169,7 +169,7 @@ func UpdateItem(item models.Item) error {
         return fmt.Errorf("no item found with ID %d", item.ID)
     }
 
-    log.Printf("Successfully deleted item with ID %d", item.ID)
+    log.Printf("Successfully updated item with ID %d", item.ID)
     return nil
 }
 
