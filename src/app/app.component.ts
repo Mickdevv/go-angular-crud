@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component'
 import { FooterComponent } from './components/footer/footer.component';
+import { Store } from '@ngrx/store';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-root',
@@ -11,5 +13,14 @@ import { FooterComponent } from './components/footer/footer.component';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
+  private readonly store = inject(Store)
+  constructor(private cookieService: CookieService) { }
   title = 'frontend';
+
+  ngOnInit() {
+    if (this.cookieService.check('jwt_token')) {
+      const initialToken = this.cookieService.get('jwt_token')
+      console.warn(initialToken)
+    }
+  }
 }
