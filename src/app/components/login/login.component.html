@@ -9,7 +9,13 @@
     <input id="password" type="password" formControlName="password">
     <br>
    
-    <button type="submit" [disabled]="!loginForm.valid || loading()">Submit</button>
+    <button
+    pButton 
+    pRipple
+    class="p-button-success mr-2" 
+    type="submit"
+    label="Log in" 
+    [disabled]="!loginForm.valid || loading()"></button>
 </form>
 <div *ngIf="loading()">
     <p-progressSpinner ariaLabel="loading" />

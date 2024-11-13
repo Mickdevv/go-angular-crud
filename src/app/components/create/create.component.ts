@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, Signal } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Item } from '../models/todo.model';
-import { addItem } from '../state/items/items.actions';
-import { UserWithToken } from '../models/user.model';
-import { selectUserToken } from '../state/user/user.selectors';
+import { Item } from '../../models/todo.model';
+import { addItem } from '../../state/items/items.actions';
+import { UserWithToken } from '../../models/user.model';
+import { selectUserSuccess, selectUserToken } from '../../state/user/user.selectors';
 import { Router } from '@angular/router';
 
 @Component({
@@ -19,12 +19,13 @@ export class CreateComponent {
   private readonly store = inject(Store);
 
   constructor(private router: Router) {
-    // if (!this.userToken()) {
-    //   this.router.navigate(['/login'])
-    // }
+    if (!this.loginSuccess()) {
+      console.warn('Routing from create to login')
+      this.router.navigate(['/login'])
+    }
   }
 
-  userToken: Signal<any> = this.store.selectSignal(selectUserToken)
+  loginSuccess: Signal<any> = this.store.selectSignal(selectUserSuccess)
 
   createItem = new FormGroup({
     title: new FormControl(''),

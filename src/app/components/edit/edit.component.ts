@@ -1,13 +1,13 @@
 import { Component, effect, inject, Signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectItemsLoading, selectItemsError, selectItem } from '../state/items/items.selectors';
-import { fetchItem, updateItem } from '../state/items/items.actions';
+import { selectItemsLoading, selectItemsError, selectItem } from '../../state/items/items.selectors';
+import { fetchItem, updateItem } from '../../state/items/items.actions';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Item } from '../models/todo.model';
-import { ApiService } from '../services/api.service';
-import { selectUserToken } from '../state/user/user.selectors';
+import { Item } from '../../models/todo.model';
+import { ApiService } from '../../services/api.service';
+import { selectUserSuccess, selectUserToken } from '../../state/user/user.selectors';
 
 @Component({
   selector: 'app-edit',
@@ -19,7 +19,7 @@ import { selectUserToken } from '../state/user/user.selectors';
 export class EditComponent {
   private readonly store = inject(Store);
 
-  userToken: Signal<any> = this.store.selectSignal(selectUserToken)
+  loginSuccess: Signal<any> = this.store.selectSignal(selectUserSuccess)
   selectedItem = this.store.selectSignal(selectItem)
   itemsLoading = this.store.selectSignal(selectItemsLoading)
   itemsError = this.store.selectSignal(selectItemsError)
@@ -31,9 +31,11 @@ export class EditComponent {
   })
 
   constructor(private route: ActivatedRoute, private itemsService: ApiService, private router: Router) {
-    // if (!this.userToken()) {
-    //   this.router.navigate(['/login'])
-    // }
+    if (!this.loginSuccess()) {
+      console.warn('Routing from edit to login')
+
+      this.router.navigate(['/login'])
+    }
     effect(() => {
       const item = this.selectedItem()
       if (item) {

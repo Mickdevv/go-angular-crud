@@ -1,6 +1,7 @@
 import { Type } from "@angular/core"
 import { UserEffects } from "./user.effects"
 
+
 export interface UserState {
     username: string,
     access: string,

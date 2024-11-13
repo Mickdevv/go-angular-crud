@@ -1,18 +1,19 @@
 import { Component, effect, inject } from '@angular/core';
-import { AuthService } from '../services/auth.service'
+import { AuthService } from '../../services/auth.service'
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { UserWithToken, UserLoginRequest } from '../models/user.model'
+import { UserWithToken, UserLoginRequest } from '../../models/user.model'
 import { Store } from '@ngrx/store';
-import { login, logout } from '../state/user/user.actions';
-import { selectUserLoading, selectUserSuccess } from '../state/user/user.selectors';
+import { login, logout } from '../../state/user/user.actions';
+import { selectUserLoading, selectUserSuccess } from '../../state/user/user.selectors';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, ProgressSpinnerModule, CommonModule],
+  imports: [ReactiveFormsModule, ProgressSpinnerModule, CommonModule, ButtonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -22,13 +23,13 @@ export class LoginComponent {
 
   loading = this.store.selectSignal(selectUserLoading)
   loginSuccess = this.store.selectSignal(selectUserSuccess)
-  constructor(private authService: AuthService, private router: Router) {
-    effect(() => {
-      if (this.loginSuccess()) {
-        this.router.navigate(['/'])
-
-      }
-    })
+  constructor(private router: Router) {
+    // effect(() => {
+    //   if (this.loginSuccess()) {
+    //     console.warn('Routing from login to home')
+    //     this.router.navigate(['/'])
+    //   }
+    // })
   }
 
   loginForm = new FormGroup({
@@ -48,13 +49,5 @@ export class LoginComponent {
 
     console.log(this.loginForm.value)
     this.store.dispatch(login.submit({ user }));
-    // this.authService.login(user).subscribe({
-    //   next: response => {
-    //     console.log('Login success : ', response)
-    //   },
-    //   error: err => {
-    //     console.error("Error logging in : ", err)
-    //   },
-    // })
   }
 }

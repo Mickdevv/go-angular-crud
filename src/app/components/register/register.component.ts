@@ -1,17 +1,22 @@
 import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
-import { UserWithToken, UserRegisterRequest } from '../models/user.model';
+import { AuthService } from '../../services/auth.service';
+import { UserWithToken, UserRegisterRequest } from '../../models/user.model';
+import { Router } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ButtonModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
-  constructor(private authService: AuthService) { }
+  constructor(private router: Router, private authService: AuthService) {
+
+  }
 
   registerForm = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),  // username must be at least 3 characters

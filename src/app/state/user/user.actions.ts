@@ -23,6 +23,7 @@ export const logout = createActionGroup({
     source: 'user logout',
     events: {
         submit: emptyProps(),
-        resetSuccess: emptyProps()
+        success: emptyProps(),
+        error: props<{ error: any }>()
     }
 })

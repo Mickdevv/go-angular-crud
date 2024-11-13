@@ -6,7 +6,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
 import { CommonModule } from '@angular/common';
 import { RippleModule } from 'primeng/ripple';
-import { logout } from '../state/user/user.actions';
+import { logout } from '../../state/user/user.actions';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 
@@ -92,8 +92,8 @@ export class HeaderComponent {
     }
 
     logout() {
+        console.warn('logout triggered')
         this.store.dispatch(logout.submit())
-
         this.router.navigate(['/login'])
     }
 }

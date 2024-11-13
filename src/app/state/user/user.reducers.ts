@@ -34,10 +34,14 @@ export const userReducer = createReducer(
 
     on(logout.submit, (state) => ({
         ...state,
-        userInitialState
+        loading: true,
     })),
-    on(logout.resetSuccess, (state) => ({
+    on(logout.success, (state) => ({
+        ...userInitialState
+    })),
+    on(logout.error, (state, { error }) => ({
         ...state,
-        success: false
-    }))
+        loading: false,
+        error: error
+    })),
 )

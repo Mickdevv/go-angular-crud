@@ -12,7 +12,13 @@
     <input id="password2" type="password" formControlName="password2">
     <br>
     
-    <button type="submit" [disabled]="!registerForm.valid">Submit</button>
+    <button pButton 
+    pRipple 
+    label="Register" 
+    class="p-button-success mr-2" 
+    type="submit" 
+    [disabled]="!registerForm.valid">
+</button>
 </form>
 
 Already have an account ? Log in <a href="/login">here</a>
