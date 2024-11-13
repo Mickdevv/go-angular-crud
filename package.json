@@ -22,6 +22,7 @@
     "@ngrx/entity": "^18.0.2",
     "@ngrx/store": "^18.0.2",
     "@ngrx/store-devtools": "^18.0.2",
+    "jwt-decode": "^4.0.0",
     "lru-cache": "^11.0.1",
     "ngx-cookie-service": "^18.0.0",
     "primeflex": "^3.3.1",
