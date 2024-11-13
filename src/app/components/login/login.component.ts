@@ -8,12 +8,12 @@ import { selectUserLoading, selectUserSuccess } from '../../state/user/user.sele
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, ProgressSpinnerModule, CommonModule, ButtonModule],
+  imports: [RouterModule, ReactiveFormsModule, ProgressSpinnerModule, CommonModule, ButtonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })

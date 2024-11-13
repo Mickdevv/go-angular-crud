@@ -2,14 +2,13 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { UserWithToken, UserRegisterRequest } from '../../models/user.model';
-import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule],
+  imports: [ReactiveFormsModule, ButtonModule, RouterModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
