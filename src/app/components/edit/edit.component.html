@@ -14,7 +14,7 @@
     label="Save" 
     class="p-button-success mr-2" 
     type="submit"
-    [disabled]="editItem.invalid"
+    [disabled]="editItem.invalid || itemsLoading()"
     (click)="submitUpdate()"></button>    
 </form>
 </div>
