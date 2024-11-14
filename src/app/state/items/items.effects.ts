@@ -4,11 +4,13 @@ import { ApiService } from "../../services/api.service";
 import { fetchItems, deleteItem, addItem, updateItem, fetchItem } from "./items.actions";
 import { catchError, delay, exhaustMap, map, mergeMap, of, switchMap, tap } from "rxjs";
 import { Item } from "../../models/todo.model";
+import { Router } from "@angular/router";
 
 @Injectable()
 export class ItemsEffects {
     private readonly actions = inject(Actions);
     private readonly itemsService = inject(ApiService);
+    private readonly router = inject(Router);
 
     getItems = createEffect(() =>
         this.actions.pipe(
@@ -69,7 +71,11 @@ export class ItemsEffects {
                     delay(1000), // Optional delay to simulate loading or timing
 
                     // On success, dispatch `deleteItem.success` with the deleted item's ID
-                    map(() => addItem.success({ item })),
+                    map(() => {
+                        this.router.navigate(['/']);
+                        return addItem.success({ item })
+                    }
+                    ),
 
                     // On error, dispatch `fetchItems.error` with error details
                     catchError((error) => of(addItem.error({ error })))
@@ -86,7 +92,10 @@ export class ItemsEffects {
                     delay(1000), // Optional delay to simulate loading or timing
 
                     // On success, dispatch `deleteItem.success` with the deleted item's ID
-                    map((item) => updateItem.success({ item })),
+                    map((item) => {
+                        this.router.navigate(['/']);
+                        return updateItem.success({ item })
+                    }),
 
                     // On error, dispatch `fetchItems.error` with error details
                     catchError((error) => of(updateItem.error({ error })))
