@@ -43,8 +43,6 @@ export class LoginComponent {
     })
   }
 
-
-
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),  // username must be at least 3 characters
     password: new FormControl('', [Validators.required, Validators.minLength(5)])   // password must be at least 6 characters

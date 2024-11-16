@@ -10,12 +10,13 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';
 import { register } from '../../state/user/user.actions';
 import { Message, MessageService } from 'primeng/api';
+import { MessagesModule } from 'primeng/messages';
 
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule, RouterModule, ProgressSpinnerModule, CommonModule],
+  imports: [MessagesModule, ReactiveFormsModule, ButtonModule, RouterModule, ProgressSpinnerModule, CommonModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
   providers: [MessageService]
