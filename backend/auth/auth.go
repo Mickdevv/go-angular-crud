@@ -92,9 +92,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		if err == io.EOF {
-			http.Error(w, "Request body is empty", http.StatusBadRequest)
+			http.Error(w, `{"error":"Request body is empty"}`, http.StatusBadRequest)
 		} else {
-			http.Error(w, "Failed to decode JSON", http.StatusBadRequest)
+			http.Error(w, `{"error":"Failed to decode JSON"}`, http.StatusBadRequest)
 		}
 		return
 	}
@@ -105,10 +105,10 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Sign-up")
 
 	if req.Password1 != req.Password2 {
-		fmt.Fprint(w, "Passwords do not match")
+		fmt.Fprint(w, `{"error":"Passwords do not match"}`)
 		return 
 	} else if len(req.Password1) < 5 {
-		fmt.Fprint(w, "Password must be longer than 5 characters")
+		fmt.Fprint(w, `{"error":"Password must be longer than 5 characters"}`)
 		return 
 	}
 
@@ -123,7 +123,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	userID, err := db.CreateUser(user)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, `{"error":"Account with that username already exists"}`, http.StatusInternalServerError)
 		return
 	}
 
@@ -140,7 +140,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, "\nNo username found")
+		fmt.Fprint(w, `{"error":"No username found"}`)
 		return
 	}
 
@@ -195,7 +195,7 @@ func VerifyToken(tokenString string) (jwt.MapClaims, error) {
 	 }
 	
 	 if !token.Valid {
-		return nil, fmt.Errorf("invalid token")
+		return nil, fmt.Errorf(`{"error":"Invalid token"}`)
 	 }
 
 	 // Extract claims (payload) from the token
@@ -217,7 +217,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	databaseUser, err := db.GetUserByUsername(requestUser.Username)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, "No user found with that username")
+		fmt.Fprint(w, `{"error":"Invalid credentials"}`)
+		// http.Error(w, "No user found with that username", http.StatusUnauthorized)
+
 		return
 	}
 
@@ -225,7 +227,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(requestUser.Password, hashedPassword, "--")
 
 	if err != nil {
-		fmt.Fprint(w, "Password error")
+		fmt.Fprint(w, `{"error":"Invalid credentials"}`)
+		// http.Error(w, "Password error", http.StatusUnauthorized)
+
 		return
 	}
 
@@ -233,8 +237,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		tokenString, tokenExpiration, err := CreateToken(requestUser.Username, databaseUser.ID)
 
 		if err != nil {
+			// http.Error(w, "No username found", http.StatusInternalServerError)
+
 			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprint(w, "\nNo username found")
+			fmt.Fprint(w, `{"error":"No username found"}`)
 			return
 		}
 
@@ -260,7 +266,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, "Invalid credentials")
+		fmt.Fprint(w, `{"error":"Invalid credentials"}`)
+		// http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 		return 
 	}
 }
@@ -271,7 +278,7 @@ func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
 
 	if tokenString == "" {
 		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, "Missing authorization header")
+		fmt.Fprint(w, `{"error": "Missing authorization header"}`)
 		return
 	}
 
@@ -283,7 +290,7 @@ func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, "Invalid token")
+		fmt.Fprint(w, `{"error":"Invalid token"}`)
 		return 
 	}
 
@@ -301,6 +308,8 @@ func ProtectRoute(next http.HandlerFunc) http.HandlerFunc {
 			fmt.Println("Error occured while reading cookie")
 			w.WriteHeader(http.StatusUnauthorized)
             fmt.Fprint(w, `{"error": "No valid token cookie found"}`)
+			// http.Error(w, "No valid token cookie found", http.StatusUnauthorized)
+
             return
 		}
 

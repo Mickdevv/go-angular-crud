@@ -27,9 +27,9 @@ export class RegisterComponent {
     effect(() => {
       const err = this.error()
       if (err) {
-        console.warn("Login error")
+        console.warn(err)
         this.messages = [
-          { severity: 'error', detail: 'Error signing up' },
+          { severity: 'error', detail: err.error.error },
         ];
       }
     })

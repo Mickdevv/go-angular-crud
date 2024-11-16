@@ -36,7 +36,7 @@ func GetUserItems(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewEncoder(w).Encode(items)
 	if err != nil {
-		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+		http.Error(w, `{"error":"Error encoding JSON"}`, http.StatusInternalServerError)
 		return
 	}
 	return 
@@ -57,13 +57,13 @@ func GetUserItem(w http.ResponseWriter, r *http.Request) {
 	item, err := db.GetUserItem(user.ID, uint64(item_id))
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "Error getting item", http.StatusInternalServerError)
+		http.Error(w, `{"error":"Error getting item"}`, http.StatusInternalServerError)
 		return
 	}
 
 	err = json.NewEncoder(w).Encode(item)
 	if err != nil {
-		http.Error(w, "Error encoding JSON", http.StatusInternalServerError)
+		http.Error(w, `{"error":"Error encoding JSON"}`, http.StatusInternalServerError)
 		return
 	}
 	return 
@@ -115,7 +115,7 @@ func RemoveItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if item.OwnerId != user.ID {
-		http.Error(w, "User unauthorized or item does not exist", http.StatusUnauthorized)
+		http.Error(w, `{"error":"User unauthorized or item does not exist"}`, http.StatusUnauthorized)
 		return 
 	}
 	fmt.Println(2)
@@ -149,12 +149,12 @@ func UpdateItem(w http.ResponseWriter, r *http.Request) {
 	item, err := db.GetUserItem(user.ID, uint64(item_id))
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "Error getting item", http.StatusInternalServerError)
+		http.Error(w, `{"error":"Error getting item"}`, http.StatusInternalServerError)
 		return
 	}
 
 	if item.OwnerId != user.ID {
-		http.Error(w, "User unauthorized or item does not exist", http.StatusUnauthorized)
+		http.Error(w, `{"error":"User unauthorized or item does not exist"}`, http.StatusUnauthorized)
 		return 
 	}
 	fmt.Println(4)

@@ -74,7 +74,7 @@ func GetUserById(id int64) (models.User, error) {
     if err != nil {
         if err == sql.ErrNoRows {
             // Handle the case where no user is found
-            return user, fmt.Errorf("no user found with id %d", id)
+            return user, fmt.Errorf(`{"error":"no user found with id %d"}`, id)
         }
         // Handle any other error that occurred during the query
         return user, err
@@ -95,7 +95,7 @@ func GetUserByUsername(username string) (models.User, error) {
     if err != nil {
         if err == sql.ErrNoRows {
             // Handle the case where no user is found
-            return user, fmt.Errorf("no user found with username %v", username)
+            return user, fmt.Errorf(`{"error":"No user found with username %v"}`, username)
         }
         // Handle any other error that occurred during the query
         return user, err

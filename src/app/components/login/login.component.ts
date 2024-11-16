@@ -1,16 +1,14 @@
 import { Component, effect, inject } from '@angular/core';
-import { AuthService } from '../../services/auth.service'
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
-import { UserWithToken, UserLoginRequest } from '../../models/user.model'
+import { UserLoginRequest } from '../../models/user.model'
 import { Store } from '@ngrx/store';
 import { login, logout } from '../../state/user/user.actions';
 import { selectUserError, selectUserLoading, selectUserSuccess } from '../../state/user/user.selectors';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 import { RippleModule } from 'primeng/ripple';
 import { MessagesModule } from 'primeng/messages';
 import { Message } from 'primeng/api';
@@ -18,7 +16,7 @@ import { Message } from 'primeng/api';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [MessagesModule, RouterModule, ReactiveFormsModule, ProgressSpinnerModule, CommonModule, ButtonModule, ToastModule, RippleModule],
+  imports: [MessagesModule, RouterModule, ReactiveFormsModule, ProgressSpinnerModule, CommonModule, ButtonModule, RippleModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   providers: [MessageService]
@@ -31,13 +29,13 @@ export class LoginComponent {
   loading = this.store.selectSignal(selectUserLoading)
   loginSuccess = this.store.selectSignal(selectUserSuccess)
   loginError = this.store.selectSignal(selectUserError)
-  constructor(private messageService: MessageService) {
+  constructor() {
     effect(() => {
       const err = this.loginError()
       if (err) {
-        console.warn("Login error")
+        console.warn(err)
         this.messages = [
-          { severity: 'error', detail: 'Error logging in' },
+          { severity: 'error', detail: err.error.error },
         ];
       }
     })
