@@ -4,18 +4,24 @@ import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angula
 import { UserWithToken, UserLoginRequest } from '../../models/user.model'
 import { Store } from '@ngrx/store';
 import { login, logout } from '../../state/user/user.actions';
-import { selectUserLoading, selectUserSuccess } from '../../state/user/user.selectors';
+import { selectUserError, selectUserLoading, selectUserSuccess } from '../../state/user/user.selectors';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { RippleModule } from 'primeng/ripple';
+import { MessagesModule } from 'primeng/messages';
+import { Message } from 'primeng/api';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, ProgressSpinnerModule, CommonModule, ButtonModule],
+  imports: [MessagesModule, RouterModule, ReactiveFormsModule, ProgressSpinnerModule, CommonModule, ButtonModule, ToastModule, RippleModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
+  providers: [MessageService]
 })
 export class LoginComponent {
 
@@ -23,13 +29,23 @@ export class LoginComponent {
 
   loading = this.store.selectSignal(selectUserLoading)
   loginSuccess = this.store.selectSignal(selectUserSuccess)
-  constructor(private router: Router) {
-    // effect(() => {
-    //   if (this.loginSuccess()) {
-    //     console.warn('Routing from login to home')
-    //     this.router.navigate(['/'])
-    //   }
-    // })
+  loginError = this.store.selectSignal(selectUserError)
+  constructor(private messageService: MessageService) {
+    effect(() => {
+      const err = this.loginError()
+      if (err) {
+        console.warn("Login error")
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Message Content' });
+      }
+    })
+  }
+
+  messages: Message[] = [];
+
+  ngOnInit() {
+    this.messages = [
+      { severity: 'error', detail: 'Error logging in' },
+    ];
   }
 
   loginForm = new FormGroup({

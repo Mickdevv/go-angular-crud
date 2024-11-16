@@ -20,5 +20,9 @@
     <div *ngIf="loading()">
         <p-progressSpinner ariaLabel="loading" />
     </div>
+    <div *ngIf="loginError()">
+        <p-messages [(value)]="messages" [enableService]="false" />
+    </div>
+
 </div>
 

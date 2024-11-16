@@ -13,9 +13,7 @@ export const login = createActionGroup({
 export const register = createActionGroup({
     source: 'user register',
     events: {
-        submit: props<{ username: string, password1: string, password2: string }>(),
-        success: props<{ username: string }>(),
-        error: props<{ error: any }>()
+        submit: props<{ username: string, password1: string, password2: string }>()
     }
 })
 

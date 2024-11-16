@@ -8,6 +8,7 @@ import { selectUserLoading, selectUserSuccess } from '../../state/user/user.sele
 import { Store } from '@ngrx/store';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';
+import { register } from '../../state/user/user.actions';
 
 
 @Component({
@@ -42,14 +43,6 @@ export class RegisterComponent {
       password2: this.registerForm.value.password2 ?? ''
     };
 
-    this.authService.register(user).subscribe({
-      next: response => {
-        console.log('Register success : ', response)
-        this.router.navigate(['/'])
-      },
-      error: err => {
-        console.error("Error logging in : ", err)
-      },
-    })
+    this.store.dispatch(register.submit(user));
   }
 }

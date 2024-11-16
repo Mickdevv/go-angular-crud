@@ -5,12 +5,14 @@ import { fetchItems, deleteItem, addItem, updateItem, fetchItem } from "./items.
 import { catchError, delay, exhaustMap, map, mergeMap, of, switchMap, tap } from "rxjs";
 import { Item } from "../../models/todo.model";
 import { Router } from "@angular/router";
+import { ToastModule } from 'primeng/toast';
 
 @Injectable()
 export class ItemsEffects {
     private readonly actions = inject(Actions);
     private readonly itemsService = inject(ApiService);
     private readonly router = inject(Router);
+
 
     getItems = createEffect(() =>
         this.actions.pipe(
@@ -40,7 +42,9 @@ export class ItemsEffects {
                     map((item: Item) => fetchItem.success({ item: item })),
 
                     // On error, dispatch the submitItemFailure action
-                    catchError((error) => of(fetchItem.error({ error })))
+                    catchError((error) => {
+                        return of(fetchItem.error({ error }))
+                    })
                 )
             )
         )

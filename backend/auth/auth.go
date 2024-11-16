@@ -135,7 +135,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println("New user : ", newUser.ID, newUser.Username)
-	fmt.Fprintf(w, "Received POST request. Username: %s, Password1: %s, Password2: %s, Hash: %s. User Id in the database : %v", req.Username, req.Password1, req.Password2, hash, userID)
+	// fmt.Fprintf(w, "Received POST request. Username: %s, Password1: %s, Password2: %s, Hash: %s. User Id in the database : %v", req.Username, req.Password1, req.Password2, hash, userID)
 	tokenString, tokenExpiration, err := CreateToken(newUser.Username, newUser.ID)
 
 	if err != nil {
@@ -216,6 +216,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	databaseUser, err := db.GetUserByUsername(requestUser.Username)
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, "No user found with that username")
 		return
 	}
