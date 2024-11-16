@@ -85,6 +85,7 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) (error) {
 func Register(w http.ResponseWriter, r *http.Request) {
 
 	var req RegisterRequest
+	var res LoginResponse
 
 	// Parse the JSON body into the SignUpRequest struct
 	fmt.Println(r.Body)
@@ -135,6 +136,33 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("New user : ", newUser.ID, newUser.Username)
 	fmt.Fprintf(w, "Received POST request. Username: %s, Password1: %s, Password2: %s, Hash: %s. User Id in the database : %v", req.Username, req.Password1, req.Password2, hash, userID)
+	tokenString, tokenExpiration, err := CreateToken(newUser.Username, newUser.ID)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprint(w, "\nNo username found")
+		return
+	}
+
+	fmt.Printf("\nToken : %v\n", tokenString)
+	http.SetCookie(w, &http.Cookie{
+		Name:     "jwt_token",
+		Value:    tokenString,
+		Expires:  tokenExpiration,
+		HttpOnly: false,         // Ensures cookie is inaccessible to JavaScript
+		SameSite: http.SameSiteLaxMode, 
+		Path:     "/",
+		Secure: false,
+	})
+
+
+	res.Access = tokenString
+	res.Refresh = tokenString
+	res.Username = newUser.Username
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(res)
+	// fmt.Fprint(w, tokenString)
+	return
 }
 
 func CreateToken(username string, id uint64) (string, time.Time, error) {

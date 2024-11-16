@@ -1,21 +1,29 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { UserWithToken, UserRegisterRequest } from '../../models/user.model';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule, Router } from '@angular/router';
+import { selectUserLoading, selectUserSuccess } from '../../state/user/user.selectors';
+import { Store } from '@ngrx/store';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonModule, RouterModule],
+  imports: [ReactiveFormsModule, ButtonModule, RouterModule, ProgressSpinnerModule, CommonModule],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
-  constructor(private router: Router, private authService: AuthService) {
+  constructor(private router: Router, private authService: AuthService) { }
 
-  }
+  private readonly store = inject(Store)
+
+  loading = this.store.selectSignal(selectUserLoading)
+  loginSuccess = this.store.selectSignal(selectUserSuccess)
 
   registerForm = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),  // username must be at least 3 characters
@@ -37,6 +45,7 @@ export class RegisterComponent {
     this.authService.register(user).subscribe({
       next: response => {
         console.log('Register success : ', response)
+        this.router.navigate(['/'])
       },
       error: err => {
         console.error("Error logging in : ", err)

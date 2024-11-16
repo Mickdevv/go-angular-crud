@@ -1,7 +1,12 @@
-<h2>Tasks : </h2>
 
+
+
+
+<h2>Tasks :
+</h2>
+<p-progressSpinner *ngIf="itemsLoading()" ariaLabel="loading" />
 <div class="flex-container">
-    <div *ngIf="!itemsLoading() && items()">
+    <div *ngIf="items().length > 0">
         <p-card *ngFor="let item of items(); index as i" header="Simple Card" class="my-1 card-container">
             <div class="my-5">
                 <p class="m-0">
@@ -32,9 +37,6 @@
             </div>
         </p-card>
     </div>
-    <div *ngIf="itemsLoading()">
-        <p-progressSpinner ariaLabel="loading" />
-    </div>
-    <div *ngIf="!itemsLoading() && (!items() || items().length == 0)">
+    <div *ngIf="!itemsLoading() && (!items() || items().length === 0)">
         No items to display
     </div>

@@ -20,157 +20,55 @@ import { selectUserSuccess } from '../../state/user/user.selectors';
 })
 export class HeaderComponent {
 
-    baseNavBarItems = [
+    items: MenuItem[] | undefined = [
         {
-            label: 'List',
-            icon: 'pi pi-home',
-            routerLink: ['/']
-        },
-        {
-            label: 'Create',
-            icon: 'pi pi-bolt',
-            routerLink: ['/create']
-        },
-        // {
-        //     label: 'To do',
-        //     icon: 'pi pi-search',
-        //     items: [
-        //         {
-        //             label: 'Create',
-        //             icon: 'pi pi-bolt',
-        //             shortcut: '⌘+S',
-        //             routerLink: ['/create']
-        //         },
-        //         {
-        //             label: 'Update',
-        //             icon: 'pi pi-server',
-        //             shortcut: '⌘+B',
-        //             routerLink: ['/create']
-        //         },
-        //         {
-        //             label: 'Delete',
-        //             icon: 'pi pi-pencil',
-        //             shortcut: '⌘+U',
-        //             routerLink: ['/create']
-        //         },
-        //         {
-        //             separator: true
-        //         },
-        //         {
-        //             label: 'Templates',
-        //             icon: 'pi pi-palette',
-        //             items: [
-        //                 {
-        //                     label: 'Item1',
-        //                     icon: 'pi pi-palette',
-        //                     badge: '2',
-        //                     routerLink: ['/create']
-        //                 },
-        //                 {
-        //                     label: 'Item2',
-        //                     icon: 'pi pi-palette',
-        //                     badge: '3',
-        //                     routerLink: ['/create']
-        //                 }
-        //             ]
-        //         }
-        //     ]
-        // },
-
-    ];
+            label: 'Login',
+            icon: 'pi pi-user',
+            routerLink: ['/login']
+        }, {
+            label: 'Register',
+            icon: 'pi pi-user',
+            routerLink: ['/register']
+        }
+    ]
 
     private readonly store = inject(Store)
     loggedIn: Signal<any> = this.store.selectSignal(selectUserSuccess)
 
     constructor(private router: Router) {
         effect(() => {
-            this.items = [...this.baseNavBarItems]
             if (!this.loggedIn()) {
-                this.items.push({
-                    label: 'Login',
-                    icon: 'pi pi-user',
-                    routerLink: ['/login']
-                }, {
-                    label: 'Register',
-                    icon: 'pi pi-user',
-                    routerLink: ['/register']
-                })
+                this.items = [
+                    {
+                        label: 'Login',
+                        icon: 'pi pi-user',
+                        routerLink: ['/login']
+                    }, {
+                        label: 'Register',
+                        icon: 'pi pi-user',
+                        routerLink: ['/register']
+                    }
+                ]
             } else {
-                this.items.push({
-                    label: 'Logout',
-                    icon: 'pi pi-user',
-                    command: () => this.logout()
-                })
-            }
-        })
-    }
-
-    items: MenuItem[] | undefined;
-    itemsEnd: MenuItem[] | undefined;
-
-    ngOnInit() {
-        this.items = [
-            {
-                label: 'List',
-                icon: 'pi pi-home',
-                routerLink: ['/']
-            },
-            {
-                label: 'Create',
-                icon: 'pi pi-bolt',
-                routerLink: ['/create']
-            },
-            {
-                label: 'To do',
-                icon: 'pi pi-search',
-                items: [
+                this.items = [
+                    {
+                        label: 'Logout',
+                        icon: 'pi pi-user',
+                        command: () => this.logout()
+                    },
+                    {
+                        label: 'List',
+                        icon: 'pi pi-home',
+                        routerLink: ['/']
+                    },
                     {
                         label: 'Create',
                         icon: 'pi pi-bolt',
-                        shortcut: '⌘+S',
                         routerLink: ['/create']
-                    },
-                    {
-                        label: 'Update',
-                        icon: 'pi pi-server',
-                        shortcut: '⌘+B',
-                        routerLink: ['/create']
-                    },
-                    {
-                        label: 'Delete',
-                        icon: 'pi pi-pencil',
-                        shortcut: '⌘+U',
-                        routerLink: ['/create']
-                    },
-                    {
-                        separator: true
-                    },
-                    {
-                        label: 'Templates',
-                        icon: 'pi pi-palette',
-                        items: [
-                            {
-                                label: 'Item1',
-                                icon: 'pi pi-palette',
-                                badge: '2',
-                                routerLink: ['/create']
-                            },
-                            {
-                                label: 'Item2',
-                                icon: 'pi pi-palette',
-                                badge: '3',
-                                routerLink: ['/create']
-                            }
-                        ]
                     }
                 ]
-            },
-            {
-                label: 'Login',
-                icon: 'pi pi-user',
-                routerLink: ['/login']
-            },
-        ];
+            }
+        })
     }
 
     logout() {

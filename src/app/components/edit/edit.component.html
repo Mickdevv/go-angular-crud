@@ -1,4 +1,4 @@
-<div *ngIf="!itemsLoading()">
+<div *ngIf="!itemsLoading()" class="form-container">
     <form [formGroup]="editItem">
         <label for="title">Title: </label>
         <input id="title" type="text" formControlName="title">
@@ -17,4 +17,8 @@
     [disabled]="editItem.invalid || itemsLoading()"
     (click)="submitUpdate()"></button>    
 </form>
+</div>
+<p-progressSpinner *ngIf="itemsLoading()" ariaLabel="loading" />
+<div *ngIf="!itemsLoading() && !selectedItem()">
+    No items to display
 </div>

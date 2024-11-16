@@ -1,23 +1,27 @@
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <label for="username">username: </label>
-    <input id="username" type="text" formControlName="username">
-    <br>
-    
-    <label for="password1">Password: </label>
-    <input id="password1" type="password" formControlName="password1">
-    <br>
-    <label for="password2">Confirm password: </label>
-    <input id="password2" type="password" formControlName="password2">
-    <br>
-    
-    <button 
-    pButton 
-    pRipple 
-    label="Register" 
-    class="p-button-success mr-2" 
-    type="submit" 
-    [disabled]="!registerForm.valid">
-</button>
-</form>
-
-<p>Already have an account? Log in <a routerLink="/login">here</a></p>
+<div class="form-container">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <label for="username">Username: </label>
+        <input id="username" type="text" formControlName="username">
+        <br>
+        
+        <label for="password1">Password: </label>
+        <input id="password1" type="password" formControlName="password1">
+        <br>
+        <label for="password2">Confirm password: </label>
+        <input id="password2" type="password" formControlName="password2">
+        <br>
+        
+        <button 
+        pButton 
+        pRipple 
+        label="Register" 
+        class="p-button-success mr-2" 
+        type="submit" 
+        [disabled]="!registerForm.valid || loading()">
+    </button>
+    <p>Already have an account? Log in <a routerLink="/login">here</a></p>
+    </form>
+    <div *ngIf="loading()">
+        <p-progressSpinner ariaLabel="loading" />
+    </div>
+</div>

@@ -1,22 +1,24 @@
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <label for="username">Username: </label>
-    <input id="username" type="text" formControlName="username">
-    <br>
-
-    <label for="password">Password: </label>
-    <input id="password" type="password" formControlName="password">
-    <br>
-   
-    <button
-    pButton 
-    pRipple
-    class="p-button-success mr-2" 
-    type="submit"
-    label="Log in" 
-    [disabled]="!loginForm.valid || loading()"></button>
-</form>
-<div *ngIf="loading()">
-    <p-progressSpinner ariaLabel="loading" />
+<div class="form-container">
+    <form  [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <label for="username">Username: </label>
+        <input id="username" type="text" formControlName="username">
+        <br>
+    
+        <label for="password">Password: </label>
+        <input id="password" type="password" formControlName="password">
+        <br>
+       
+        <button
+        pButton 
+        pRipple
+        class="p-button-success mr-2" 
+        type="submit"
+        label="Log in" 
+        [disabled]="!loginForm.valid || loading()"></button>
+        Don't have an account yet ? Sign up <a routerLink="/register"> here</a>
+    </form>
+    <div *ngIf="loading()">
+        <p-progressSpinner ariaLabel="loading" />
+    </div>
 </div>
 
-Don't have an account yet ? Sign up <a routerLink="/register">here</a>

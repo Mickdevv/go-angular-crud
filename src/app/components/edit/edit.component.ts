@@ -9,12 +9,14 @@ import { Item } from '../../models/todo.model';
 import { ApiService } from '../../services/api.service';
 import { selectUserSuccess, selectUserToken } from '../../state/user/user.selectors';
 import { ButtonModule } from 'primeng/button';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+
 
 
 @Component({
   selector: 'app-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, ButtonModule],
+  imports: [ReactiveFormsModule, CommonModule, ButtonModule, ProgressSpinnerModule],
   templateUrl: './edit.component.html',
   styleUrl: './edit.component.scss'
 })

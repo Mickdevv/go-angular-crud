@@ -1,4 +1,5 @@
 
+<div class="form-container">
     <form [formGroup]="createItem">
         <label for="title">Title: </label>
         <input id="title" type="text" formControlName="title">
@@ -6,6 +7,7 @@
     <label for="description">Description: </label>
     <textarea id="description" formControlName="description"></textarea> 
     <br>
+    <div></div>
         <label for="done">Done: </label>
         <input id="done" type="checkbox" formControlName="done">
         <button 
@@ -17,3 +19,4 @@
         [disabled]="createItem.invalid"
         (click)="submitItem()"></button>
     </form>
+    </div>
