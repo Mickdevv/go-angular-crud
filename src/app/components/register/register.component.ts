@@ -1,14 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { ReactiveFormsModule, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { UserWithToken, UserRegisterRequest } from '../../models/user.model';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule, Router } from '@angular/router';
-import { selectUserLoading, selectUserSuccess } from '../../state/user/user.selectors';
+import { selectUserError, selectUserLoading, selectUserSuccess } from '../../state/user/user.selectors';
 import { Store } from '@ngrx/store';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';
 import { register } from '../../state/user/user.actions';
+import { Message, MessageService } from 'primeng/api';
 
 
 @Component({
@@ -16,15 +17,30 @@ import { register } from '../../state/user/user.actions';
   standalone: true,
   imports: [ReactiveFormsModule, ButtonModule, RouterModule, ProgressSpinnerModule, CommonModule],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss'
+  styleUrl: './register.component.scss',
+  providers: [MessageService]
 })
 export class RegisterComponent {
-  constructor(private router: Router, private authService: AuthService) { }
+
+  constructor(private router: Router, private authService: AuthService) {
+    effect(() => {
+      const err = this.error()
+      if (err) {
+        console.warn("Login error")
+        this.messages = [
+          { severity: 'error', detail: 'Error signing up' },
+        ];
+      }
+    })
+  }
 
   private readonly store = inject(Store)
 
+
+  messages: Message[] = [];
   loading = this.store.selectSignal(selectUserLoading)
   loginSuccess = this.store.selectSignal(selectUserSuccess)
+  error = this.store.selectSignal(selectUserError)
 
   registerForm = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),  // username must be at least 3 characters

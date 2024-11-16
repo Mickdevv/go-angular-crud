@@ -50,9 +50,11 @@ export class UserEffects {
 
                     ),
                     catchError((error) => of(login.error({ error }))),
-                    tap(() => {
-                        console.warn('Routing from register to home')
-                        this.router.navigate(['/'])
+                    tap((action) => {
+                        if (action.type === login.success.type) {
+                            console.warn('Routing from register to home');
+                            this.router.navigate(['/']);
+                        }
                     }) // Redirect after successful login
                 )
             )

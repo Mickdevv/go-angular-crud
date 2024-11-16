@@ -27,6 +27,7 @@ export class LoginComponent {
 
   private readonly store = inject(Store);
 
+  messages: Message[] = [];
   loading = this.store.selectSignal(selectUserLoading)
   loginSuccess = this.store.selectSignal(selectUserSuccess)
   loginError = this.store.selectSignal(selectUserError)
@@ -35,18 +36,14 @@ export class LoginComponent {
       const err = this.loginError()
       if (err) {
         console.warn("Login error")
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Message Content' });
+        this.messages = [
+          { severity: 'error', detail: 'Error logging in' },
+        ];
       }
     })
   }
 
-  messages: Message[] = [];
 
-  ngOnInit() {
-    this.messages = [
-      { severity: 'error', detail: 'Error logging in' },
-    ];
-  }
 
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),  // username must be at least 3 characters
