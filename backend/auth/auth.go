@@ -105,9 +105,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Sign-up")
 
 	if req.Password1 != req.Password2 {
+		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, `{"error":"Passwords do not match"}`)
 		return 
 	} else if len(req.Password1) < 5 {
+		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, `{"error":"Password must be longer than 5 characters"}`)
 		return 
 	}
