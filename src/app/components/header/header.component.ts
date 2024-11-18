@@ -9,7 +9,7 @@ import { RippleModule } from 'primeng/ripple';
 import { logout } from '../../state/user/user.actions';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
-import { selectUserSuccess } from '../../state/user/user.selectors';
+import { selectUsername, selectUserSuccess } from '../../state/user/user.selectors';
 
 @Component({
     selector: 'app-header',
@@ -34,6 +34,7 @@ export class HeaderComponent {
 
     private readonly store = inject(Store)
     loggedIn: Signal<any> = this.store.selectSignal(selectUserSuccess)
+    username: Signal<string> = this.store.selectSignal(selectUsername)
 
     constructor(private router: Router) {
         effect(() => {
