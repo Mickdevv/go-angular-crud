@@ -22,7 +22,7 @@ export class ItemsEffects {
                     delay(1000),
                     // On success, dispatch the fetchItems.success action
                     tap(items => console.log('Fetched items:', items)),
-                    map((items: Item[]) => fetchItems.success({ items: items })),
+                    map((items: Item[]) => fetchItems.success({ items: items ?? [] })),
 
                     // On error, dispatch the submitItemFailure action
                     catchError((error) => of(fetchItems.error({ error })))
