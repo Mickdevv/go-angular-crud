@@ -4,6 +4,6 @@ Once installed, open a new terminal and navigate to the backend folder inside th
 Run `go run main.go`
 
 # Frontend
-Download the project, and in a terminal navigate to the root directory.
+In a terminal navigate to the root directory.
 Run `npm install` to install the dependencies.
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`.
